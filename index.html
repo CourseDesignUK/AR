@@ -18,18 +18,11 @@
     arjs="sourceType: webcam; trackingMethod: best; debugUIEnabled: true;"
     vr-mode-ui="enabled: false">
 
-    <!-- Lighting (critical for GLB visibility) -->
     <a-entity light="type: ambient; intensity: 1.2"></a-entity>
     <a-entity light="type: directional; intensity: 0.8" position="1 2 1"></a-entity>
 
-    <!-- Marker -->
     <a-marker preset="hiro">
-      <a-entity
-        gltf-model="model.glb"
-        scale="1  1 1"
-        position="0 0.5 0"
-        rotation="-90 0 0">
-      </a-entity>
+      <a-box color="red" scale="1 1 1"></a-box>
     </a-marker>
 
     <a-entity camera></a-entity>
