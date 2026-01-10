@@ -1,44 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
+    <title>3D Model AR Viewer</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>212 AR - iOS Only</title>
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+    
     <style>
-        body { 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            height: 100vh; 
-            margin: 0; 
-            background-color: #f2f2f7;
-            font-family: -apple-system, sans-serif;
-        }
-        /* Style for the tappable preview */
-        .ar-link {
-            text-decoration: none;
-            text-align: center;
-        }
-        .ar-link img {
-            width: 250px;
-            height: 250px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            border: 1px solid #ddd;
-        }
-        .instruction {
-            margin-top: 15px;
-            color: #8e8e93;
-            font-size: 14px;
-        }
+      body { margin: 0; font-family: sans-serif; }
+      model-viewer {
+        width: 100vw;
+        height: 100vh;
+        background-color: #eeeeee;
+      }
+      #ar-button {
+        background-color: #ffffff;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        padding: 12px 20px;
+        position: absolute;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-weight: bold;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
 
-    <a rel="ar" href="212.usdz" class="ar-link">
-        <img src="preview-image.jpg" alt="Tap to view 212 in AR">
-        <div class="instruction">Tap to view in your room</div>
-    </a>
+    <model-viewer 
+      src="212.glb" 
+      ios-src="212.usdz"
+      ar 
+      ar-modes="webxr scene-viewer quick-look" 
+      camera-controls 
+      touch-action="pan-y"
+      shadow-intensity="1"
+      auto-rotate>
+      
+      <button slot="ar-button" id="ar-button">
+        👋 VIEW IN YOUR SPACE
+      </button>
 
-</body>
+    </model-viewer>
+
+  </body>
 </html>
