@@ -1,49 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>3D Model AR Viewer</title>
+<head>
+    <title>212 Model AR Viewer</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
     
     <style>
-      body { margin: 0; font-family: sans-serif; }
-      model-viewer {
-        width: 100vw;
-        height: 100vh;
-        background-color: #eeeeee;
-      }
-      #ar-button {
-        background-color: #ffffff;
-        border-radius: 8px;
-        border: 1px solid #ccc;
-        padding: 12px 20px;
-        position: absolute;
-        bottom: 30px;
-        left: 50%;
-        transform: translateX(-50%);
-        font-weight: bold;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-      }
+        body { margin: 0; background-color: #f7f7f7; font-family: sans-serif; }
+        model-viewer {
+            width: 100vw;
+            height: 100vh;
+            --poster-color: #eee;
+        }
+        #ar-button {
+            background-color: #4285f4;
+            border-radius: 30px;
+            border: none;
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 16px 32px;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            cursor: pointer;
+            z-index: 10;
+        }
+        #ar-button:active { background-color: #3367d6; }
     </style>
-  </head>
-  <body>
+</head>
+<body>
 
     <model-viewer 
-      src="212.glb" 
-      ios-src="212.usdz"
-      ar 
-      ar-modes="webxr scene-viewer quick-look" 
-      camera-controls 
-      touch-action="pan-y"
-      shadow-intensity="1"
-      auto-rotate>
-      
-      <button slot="ar-button" id="ar-button">
-        👋 VIEW IN YOUR SPACE
-      </button>
+        src="https://drive.google.com/uc?export=download&id=1PAP4owzJsdeWDyCX1e2kjI7PfVmY82PC" 
+        ios-src="https://drive.google.com/uc?export=download&id=1ONlo-4rJV5R8zGiAtLVHYIvzFJ00Ky95"
+        ar 
+        ar-modes="webxr scene-viewer quick-look" 
+        camera-controls 
+        shadow-intensity="1" 
+        environment-image="neutral"
+        auto-rotate
+        touch-action="pan-y">
+        
+        <button slot="ar-button" id="ar-button">
+            👋 VIEW 212 IN YOUR ROOM
+        </button>
 
     </model-viewer>
 
-  </body>
+</body>
 </html>
