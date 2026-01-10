@@ -1,31 +1,49 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>Web AR Demo</title>
+<html lang="en">
+  <head>
+    <title>3D Model AR Viewer</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+    
+    <style>
+      body { margin: 0; font-family: sans-serif; }
+      model-viewer {
+        width: 100vw;
+        height: 100vh;
+        background-color: #eeeeee;
+      }
+      #ar-button {
+        background-color: #ffffff;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        padding: 12px 20px;
+        position: absolute;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-weight: bold;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      }
+    </style>
+  </head>
+  <body>
 
-  <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script>
+    <model-viewer 
+      src="212.glb" 
+      ios-src="212.usdz"
+      ar 
+      ar-modes="webxr scene-viewer quick-look" 
+      camera-controls 
+      touch-action="pan-y"
+      shadow-intensity="1"
+      auto-rotate>
+      
+      <button slot="ar-button" id="ar-button">
+        👋 VIEW IN YOUR SPACE
+      </button>
 
-  <style>
-    body { margin: 0; overflow: hidden; }
-  </style>
-</head>
+    </model-viewer>
 
-<body>
-  <a-scene
-    embedded
-    arjs="sourceType: webcam; trackingMethod: best; debugUIEnabled: true;"
-    vr-mode-ui="enabled: false">
-
-    <a-entity light="type: ambient; intensity: 1.2"></a-entity>
-    <a-entity light="type: directional; intensity: 0.8" position="0 0 0"></a-entity>
-
-    <a-marker preset="hiro">
-      <a-box color="blue" scale=".2 .2 .2"></a-box>
-    </a-marker>
-
-    <a-entity camera></a-entity>
-  </a-scene>
-</body>
+  </body>
 </html>
