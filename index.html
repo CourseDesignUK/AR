@@ -73,6 +73,7 @@
         transform: translateX(-50%);
         font-weight: bold;
         color: #00837d;
+        z-index: 10;
       }
     </style>
   </head>
@@ -85,6 +86,7 @@
         <select id="model-select">
           <option value="tld_121_aircraft_loader-2.glb" data-ios="212.usdz" data-show-hotspots="true">Aircraft Loader</option>
           <option value="model.glb" data-ios="777.usdz" data-show-hotspots="false">Boeing 777</option>
+          <option value="Jet.glb" data-ios="Jet.usdz" data-show-hotspots="false">Jet Engine</option>
         </select>
       </div>
     </header>
@@ -116,25 +118,28 @@
     <script>
       const viewer = document.querySelector('#main-viewer');
       const modelSelect = document.querySelector('#model-select');
-      const hotspots = document.querySelectorAll('.loader-only');
+      const loaderHotspots = document.querySelectorAll('.loader-only');
 
       modelSelect.addEventListener('change', (event) => {
         const selectedOption = event.target.selectedOptions[0];
         
-        // Update Model Sources
+        // Update Model Sources (GLB for Web/Android, USDZ for iOS)
         viewer.src = selectedOption.value;
         viewer.iosSrc = selectedOption.getAttribute('data-ios');
 
-        // Toggle Hotspots: Only show for Loader
+        // Toggle Hotspots: Only visible if 'data-show-hotspots' is true
         const showHotspots = selectedOption.getAttribute('data-show-hotspots') === 'true';
-        hotspots.forEach(h => h.style.display = showHotspots ? 'block' : 'none');
+        loaderHotspots.forEach(h => h.style.display = showHotspots ? 'block' : 'none');
       });
 
+      // Hotspot click interaction
       viewer.addEventListener('click', (event) => {
         const hotspot = event.target.closest('.Hotspot');
         if (hotspot) {
           hotspot.classList.toggle('selected');
-          document.querySelectorAll('.Hotspot').forEach(h => { if (h !== hotspot) h.classList.remove('selected'); });
+          document.querySelectorAll('.Hotspot').forEach(h => { 
+            if (h !== hotspot) h.classList.remove('selected'); 
+          });
         }
       });
     </script>
