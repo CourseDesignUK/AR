@@ -1,231 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <title>TLD 121 Aircraft Loader - Interactive AR</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
-  
-  <style>
-    body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-
-    model-viewer {
-      width: 100vw;
-      height: 100vh;
-      background-color: #eeeeee;
-    }
-
-    /* --- Hotspot Styling --- */
-    .Hotspot {
-      background: #fff;
-      border-radius: 50%;
-      border: none;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.25);
-      cursor: pointer;
-      height: 24px;
-      width: 24px;
-      padding: 0;
-      position: relative;
-      transition: background-color 0.3s;
-    }
-
-    /* The Pulsing Ripple Effect */
-    .Hotspot::after {
-      content: "";
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      background-color: rgba(255, 255, 255, 0.7);
-      transform: translate(-50%, -50%);
-      animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-      0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-      100% { transform: translate(-50%, -50%) scale(2.5); opacity: 0; }
-    }
-
-    .Hotspot.active {
-      background-color: #007bff;
-    }
-
-    .Hotspot.active::after {
-      display: none; /* Stop pulsing when active */
-    }
-
-    /* --- Annotation (Label) Styling --- */
-    .HotspotAnnotation {
-      background: #fff;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      color: #333;
-      display: block;
-      font-size: 14px;
-      font-weight: 600;
-      padding: 10px 16px;
-      position: absolute;
-      left: 32px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: max-content;
-      
-      /* Hidden by default */
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s, transform 0.3s;
-    }
-
-    .Hotspot.active .HotspotAnnotation {
-      opacity: 1;
-      transform: translateY(-50%) translateX(8px);
-    }
-
-    /* --- AR Button & UI --- */
-    #ar-button {
-      background-color: #ffffff;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      padding: 12px 20px;
-      position: absolute;
-      bottom: 30px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-weight: bold;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-      cursor: pointer;
-    }
-
-    .progress-bar {
-      display: block;
-      width: 33%;
-      height: 10%;
-      max-height: 2%;
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
-      border-radius: 25px;
-      box-shadow: 0px 3px 10px 3px rgba(0, 0, 0, 0.5), 0px 0px 5px 1px rgba(0, 0, 0, 0.6);
-      border: 1px solid rgba(255, 255, 255, 0.9);
-      background-color: rgba(0, 0, 0, 0.5);
-    }
-
-    .progress-bar.hide { display: none; }
-
-    .update-bar {
-      background-color: rgba(255, 255, 255, 0.9);
-      width: 0%;
-      height: 100%;
-      border-radius: 25px;
-      transition: width 0.3s;
-    }
-
-    #ar-prompt {
-      position: absolute;
-      left: 50%;
-      bottom: 175px;
-      transform: translateX(-50%);
-      display: none;
-    }
-
-    model-viewer[ar-status="session-started"] > #ar-prompt {
-      display: block;
-    }
-
-    #ar-prompt img {
-      animation: circle 4s linear infinite;
-    }
-
-    @keyframes circle {
-      from { transform: translateX(-38px) rotate(0deg) translateX(38px) rotate(0deg); }
-      to { transform: translateX(-38px) rotate(360deg) translateX(38px) rotate(-360deg); }
-    }
-  </style>
-</head>
-<body>
-
-  <model-viewer 
-    src="tld_121_aircraft_loader.glb" 
-    ar 
-    ar-modes="webxr scene-viewer quick-look" 
-    camera-controls 
-    tone-mapping="neutral" 
-    poster="poster.webp" 
-    shadow-intensity="1" 
-    environment-image="aircraft_workshop_01_1k.hdr">
-
-    <button class="Hotspot" slot="hotspot-1" 
-      data-position="-0.13155839312821627m 0.0376686826955816m -0.6519733882664832m" 
-      data-normal="-1m 0m 0m" 
-      data-visibility-attribute="visible">
-      <div class="HotspotAnnotation">Engine</div>
-    </button>
-
-    <button class="Hotspot" slot="hotspot-2" 
-      data-position="0.24329702029745348m 0.7251689785843767m -0.3787829279899597m" 
-      data-normal="0m 0m 1m" 
-      data-visibility-attribute="visible">
-      <div class="HotspotAnnotation">Controls</div>
-    </button>
-
-    <button class="Hotspot" slot="hotspot-3" 
-      data-position="-0.011832628759229247m 0.679622714407742m 0.332448877077804m" 
-      data-normal="0m 1m 0m" 
-      data-visibility-attribute="visible">
-      <div class="HotspotAnnotation">Main Deck</div>
-    </button>
-
-    <button class="Hotspot" slot="hotspot-5" 
-      data-position="0.1324610209327211m 0.03764510645109026m -0.4058360906218339m" 
-      data-normal="0.9987297742578406m -0.03077976992658189m 0.039892903806939564m" 
-      data-visibility-attribute="visible">
-      <div class="HotspotAnnotation">Main Drive</div>
-    </button>
-
-    <div class="progress-bar hide" slot="progress-bar">
-        <div class="update-bar"></div>
-    </div>
-
-    <button slot="ar-button" id="ar-button">
-        View in your space
-    </button>
+  <head>
+    <title>3D Model AR Viewer</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
     
-    <div id="ar-prompt">
-        <img src="https://modelviewer.dev/shared-assets/icons/hand.png">
-    </div>
+    <style>
+      body { margin: 0; font-family: sans-serif; }
+      model-viewer {
+        width: 100vw;
+        height: 100vh;
+        background-color: #eeeeee;
+      }
+      #ar-button {
+        background-color: #ffffff;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        padding: 12px 20px;
+        position: absolute;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-weight: bold;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      }
+    </style>
+  </head>
+  <body>
 
-  </model-viewer>
+    <model-viewer 
+      src="212.glb" 
+      ios-src="212.usdz"
+      ar 
+      ar-modes="webxr scene-viewer quick-look" 
+      camera-controls 
+      touch-action="pan-y"
+      shadow-intensity="1"
+      auto-rotate>
+      
+      <button slot="ar-button" id="ar-button">
+        👋 VIEW IN YOUR SPACE
+      </button>
 
-  <script>
-    const modelViewer = document.querySelector('model-viewer');
-    const hotspots = document.querySelectorAll('.Hotspot');
+    </model-viewer>
 
-    hotspots.forEach((hotspot) => {
-      hotspot.addEventListener('click', (event) => {
-        // Stop click from closing immediately via the modelViewer listener
-        event.stopPropagation();
-
-        // Check if this hotspot is already active
-        const isActive = hotspot.classList.contains('active');
-
-        // Close all hotspots first
-        hotspots.forEach(h => h.classList.remove('active'));
-
-        // If it wasn't active, open it
-        if (!isActive) {
-          hotspot.classList.add('active');
-        }
-      });
-    });
-
-    // Close hotspots when clicking anywhere else on the model
-    modelViewer.addEventListener('click', () => {
-      hotspots.forEach(h => h.classList.remove('active'));
-    });
-  </script>
-
-</body>
+  </body>
 </html>
