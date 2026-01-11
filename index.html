@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>TEST MODE - Huge Hotspots</title>
+    <title>YunExpress 3D Viewer</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
@@ -19,57 +19,74 @@
       }
       .header img { height: 50px; width: auto; margin-bottom: 10px; }
 
-      model-viewer { flex-grow: 1; width: 100%; background-color: #333; /* Dark background to see spots better */ }
-
-      /* HUGE TESTING HOTSPOTS */
-      .Hotspot {
-        background: #ff0000 !important; /* Bright Red */
-        border-radius: 50%;
-        border: 5px solid #ffffff;
-        box-shadow: 0 0 20px rgba(255, 255, 255, 1);
-        cursor: pointer;
-        height: 60px !important; /* HUGE SIZE */
-        width: 60px !important; /* HUGE SIZE */
-        padding: 0;
-        display: block !important; /* FORCE VISIBLE */
-        opacity: 1 !important;
+      .controls { margin-bottom: 10px; display: flex; gap: 10px; align-items: center; }
+      select {
+        padding: 8px;
+        border-radius: 5px;
+        border: 1px solid #00837d;
+        color: #00837d;
+        font-weight: bold;
+        background: white;
       }
 
+      model-viewer { flex-grow: 1; width: 100%; background-color: #eeeeee; }
+
+      /* Hotspot Styling */
+      .Hotspot {
+        background: #00837d; 
+        border-radius: 50%;
+        border: 2px solid #ffffff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        cursor: pointer;
+        height: 22px;
+        width: 22px;
+        padding: 0;
+      }
+      .Hotspot.selected { background: #f8a51b; }
       .HotspotAnnotation {
+        display: none; 
         background: #ffffff;
-        border-radius: 10px;
-        color: #000;
-        font-size: 20px; /* Bigger text */
+        border-radius: 4px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        color: #333;
+        font-size: 14px;
         font-weight: bold;
-        padding: 15px;
+        padding: 8px 12px;
         position: absolute;
-        top: 70px;
+        top: 32px;
         left: 50%;
         transform: translateX(-50%);
-        white-space: nowrap;
-        border: 3px solid red;
+        white-space: pre-wrap;
+        width: max-content;
+        border-top: 3px solid #00837d;
       }
+      .Hotspot.selected .HotspotAnnotation { display: block; }
 
       #ar-button {
         background-color: #ffffff;
+        border-radius: 8px;
+        border: 1px solid #00837d;
         padding: 12px 20px;
         position: absolute;
         bottom: 30px;
         left: 50%;
         transform: translateX(-50%);
-        z-index: 100;
+        font-weight: bold;
+        color: #00837d;
+        z-index: 10;
       }
     </style>
   </head>
   <body>
 
     <header class="header">
-      <img src="logo.jpeg" alt="Logo">
+      <img src="logo.jpeg" alt="YunExpress Logo">
       <div class="controls">
+        <label for="model-select">Select Asset:</label>
         <select id="model-select">
-          <option value="tld_121_aircraft_loader-2.glb" data-ios="212.usdz">Aircraft Loader</option>
-          <option value="model.glb" data-ios="777.usdz">Boeing 777</option>
-          <option value="Jet.glb" data-ios="Jet.usdz">Jet Engine</option>
+          <option value="tld_121_aircraft_loader-2.glb" data-ios="212.usdz" data-show-hotspots="true">Aircraft Loader</option>
+          <option value="model.glb" data-ios="777.usdz" data-show-hotspots="false">Boeing 777</option>
+          <option value="Jet.glb" data-ios="Jet.usdz" data-show-hotspots="false">Jet Engine</option>
         </select>
       </div>
     </header>
@@ -79,33 +96,51 @@
       src="tld_121_aircraft_loader-2.glb" 
       ios-src="212.usdz"
       ar 
+      ar-modes="webxr scene-viewer quick-look" 
       camera-controls 
-      min-hotspot-opacity="0.9" 
-      style="background-color: #444;">
+      shadow-intensity="1"
+      tone-mapping="neutral"
+      auto-rotate>
       
-      <button class="Hotspot" slot="hotspot-1" data-position="0.2295m 0.7674m -0.3806m" data-normal="0.015m 0.185m 0.982m">
-          <div class="HotspotAnnotation">TEST: Controls</div>
+      <button class="Hotspot loader-only" slot="hotspot-1" data-position="0.2295m 0.7674m -0.3806m" data-normal="0.015m 0.185m 0.982m">
+          <div class="HotspotAnnotation">controls<br>User controls</div>
+      </button>
+      <button class="Hotspot loader-only" slot="hotspot-2" data-position="-0.1437m 0.0544m -0.4130m" data-normal="-1m 0m 0m">
+          <div class="HotspotAnnotation">Driving Wheels</div>
+      </button>
+      <button class="Hotspot loader-only" slot="hotspot-3" data-position="-0.2185m 0.6796m 0.3771m" data-normal="0m 1m 0m">
+          <div class="HotspotAnnotation">Main Deck</div>
       </button>
 
-      <button class="Hotspot" slot="hotspot-2" data-position="-0.1437m 0.0544m -0.4130m" data-normal="-1m 0m 0m">
-          <div class="HotspotAnnotation">TEST: Wheels</div>
-      </button>
-
-      <button class="Hotspot" slot="hotspot-3" data-position="-0.2185m 0.6796m 0.3771m" data-normal="0m 1m 0m">
-          <div class="HotspotAnnotation">TEST: Deck</div>
-      </button>
-
-      <button slot="ar-button" id="ar-button">VIEW IN AR</button>
+      <button slot="ar-button" id="ar-button">👋 VIEW IN YOUR SPACE</button>
     </model-viewer>
 
     <script>
       const viewer = document.querySelector('#main-viewer');
       const modelSelect = document.querySelector('#model-select');
+      const loaderHotspots = document.querySelectorAll('.loader-only');
 
       modelSelect.addEventListener('change', (event) => {
         const selectedOption = event.target.selectedOptions[0];
+        
+        // Update Model Sources (GLB for Web/Android, USDZ for iOS)
         viewer.src = selectedOption.value;
         viewer.iosSrc = selectedOption.getAttribute('data-ios');
+
+        // Toggle Hotspots: Only visible if 'data-show-hotspots' is true
+        const showHotspots = selectedOption.getAttribute('data-show-hotspots') === 'true';
+        loaderHotspots.forEach(h => h.style.display = showHotspots ? 'block' : 'none');
+      });
+
+      // Hotspot click interaction
+      viewer.addEventListener('click', (event) => {
+        const hotspot = event.target.closest('.Hotspot');
+        if (hotspot) {
+          hotspot.classList.toggle('selected');
+          document.querySelectorAll('.Hotspot').forEach(h => { 
+            if (h !== hotspot) h.classList.remove('selected'); 
+          });
+        }
       });
     </script>
   </body>
