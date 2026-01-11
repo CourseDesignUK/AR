@@ -1,91 +1,93 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>YunExpress 3D Model Viewer</title>
+    <title>YunExpress 3D Asset Viewer</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
     
     <style>
-      body { margin: 0; font-family: sans-serif; display: flex; flex-direction: column; height: 100vh; }
+      body { margin: 0; font-family: sans-serif; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
 
       .header {
-        padding: 10px 15px;
+        padding: 10px;
         display: flex;
         flex-direction: column;
         align-items: center;
         background: white;
-        border-bottom: 2px solid #00837d;
+        border-bottom: 3px solid #00837d;
+        z-index: 100;
       }
-      .header img { height: 50px; width: auto; margin-bottom: 10px; }
+      .header img { height: 45px; width: auto; margin-bottom: 8px; }
 
-      .controls { margin-bottom: 10px; display: flex; gap: 10px; align-items: center; }
+      .controls { display: flex; align-items: center; gap: 10px; }
       select {
         padding: 8px;
-        border-radius: 5px;
-        border: 1px solid #00837d;
-        color: #00837d;
+        border: 2px solid #00837d;
+        border-radius: 6px;
         font-weight: bold;
-        background: white;
+        color: #00837d;
       }
 
-      model-viewer { flex-grow: 1; width: 100%; background-color: #eeeeee; }
+      model-viewer { flex-grow: 1; width: 100%; background-color: #222; }
 
-      /* HUGE TESTING HOTSPOTS - RED FOR VISIBILITY */
+      /* GIANT PULSING TEST HOTSPOTS */
       .Hotspot {
-        background: #ff0000; 
+        background: #ff0000 !important; /* Bright Red */
         border-radius: 50%;
-        border: 4px solid #ffffff;
-        box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
-        cursor: pointer;
-        height: 40px; 
-        width: 40px;
+        border: 4px solid #fff;
+        width: 50px !important; 
+        height: 50px !important;
         padding: 0;
-        display: block;
+        cursor: pointer;
+        position: relative;
+        z-index: 999; /* Force to front */
+        box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
+        animation: pulse 1.5s infinite;
       }
 
-      .Hotspot.selected { background: #f8a51b; }
+      @keyframes pulse {
+        0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.7); }
+        70% { transform: scale(1.2); box-shadow: 0 0 0 20px rgba(255, 0, 0, 0); }
+        100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 0, 0, 0); }
+      }
 
       .HotspotAnnotation {
-        display: none; 
-        background: #ffffff;
-        border-radius: 4px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-        color: #333;
-        font-size: 16px;
-        font-weight: bold;
+        display: none;
+        background: white;
+        color: black;
         padding: 10px;
+        border-radius: 8px;
+        font-size: 18px;
         position: absolute;
-        top: 50px;
+        top: 60px;
         left: 50%;
         transform: translateX(-50%);
+        border: 2px solid #ff0000;
         white-space: nowrap;
-        border-top: 3px solid #00837d;
       }
 
       .Hotspot.selected .HotspotAnnotation { display: block; }
 
       #ar-button {
-        background-color: #ffffff;
-        border-radius: 8px;
-        border: 1px solid #00837d;
-        padding: 12px 20px;
+        background: white;
+        border: 2px solid #00837d;
+        border-radius: 10px;
+        padding: 15px 25px;
         position: absolute;
-        bottom: 30px;
+        bottom: 20px;
         left: 50%;
         transform: translateX(-50%);
         font-weight: bold;
         color: #00837d;
-        z-index: 10;
       }
     </style>
   </head>
   <body>
 
     <header class="header">
-      <img src="logo.jpeg" alt="YunExpress Logo">
+      <img src="logo.jpeg" alt="YunExpress">
       <div class="controls">
-        <label for="model-select">Select Asset:</label>
         <select id="model-select">
           <option value="tld_121_aircraft_loader-2.glb" data-ios="212.usdz" data-show-hotspots="true">Aircraft Loader</option>
           <option value="model.glb" data-ios="777.usdz" data-show-hotspots="false">Boeing 777</option>
@@ -100,35 +102,23 @@
       src="tld_121_aircraft_loader-2.glb" 
       ios-src="212.usdz"
       ar 
-      ar-modes="webxr scene-viewer quick-look" 
       camera-controls 
-      shadow-intensity="1"
-      tone-mapping="neutral"
-      auto-rotate
-      min-hotspot-opacity="0.8">
+      min-hotspot-opacity="1" 
+      shadow-intensity="1">
       
       <button class="Hotspot loader-only" slot="hotspot-1" 
-        data-position="0.22957610886389085m 0.7674381325054367m -0.38064573406698754m" 
-        data-normal="0.015376133332711274m 0.18512307178201293m 0.9825950451827684m"
-        data-visibility-attribute="visible">
-          <div class="HotspotAnnotation">controls<br>User controls</div>
+        data-position="0.229576m 0.767438m -0.380645m" 
+        data-normal="0.015m 0.185m 0.982m">
+          <div class="HotspotAnnotation">Controls Area</div>
       </button>
 
       <button class="Hotspot loader-only" slot="hotspot-2" 
-        data-position="-0.14377078479258093m 0.05440645236415009m -0.41308662691942916m" 
-        data-normal="-1m 0m 0m"
-        data-visibility-attribute="visible">
-          <div class="HotspotAnnotation">Driving Wheels</div>
+        data-position="-0.143770m 0.054406m -0.413086m" 
+        data-normal="-1m 0m 0m">
+          <div class="HotspotAnnotation">Front Wheel</div>
       </button>
 
-      <button class="Hotspot loader-only" slot="hotspot-3" 
-        data-position="-0.21859271407197248m 0.679622714407742m 0.3771686065408919m" 
-        data-normal="0m 1m 0m"
-        data-visibility-attribute="visible">
-          <div class="HotspotAnnotation">Main Deck</div>
-      </button>
-
-      <button slot="ar-button" id="ar-button">👋 VIEW IN YOUR SPACE</button>
+      <button slot="ar-button" id="ar-button">VIEW IN AR</button>
     </model-viewer>
 
     <script>
@@ -137,18 +127,14 @@
       const loaderHotspots = document.querySelectorAll('.loader-only');
 
       modelSelect.addEventListener('change', (event) => {
-        const selectedOption = event.target.selectedOptions[0];
-        
-        // Update Model Sources
-        viewer.src = selectedOption.value;
-        viewer.iosSrc = selectedOption.getAttribute('data-ios');
+        const selected = event.target.selectedOptions[0];
+        viewer.src = selected.value;
+        viewer.iosSrc = selected.getAttribute('data-ios');
 
-        // Toggle Hotspots: Only show for Loader
-        const showHotspots = selectedOption.getAttribute('data-show-hotspots') === 'true';
-        loaderHotspots.forEach(h => h.style.display = showHotspots ? 'block' : 'none');
+        const show = selected.getAttribute('data-show-hotspots') === 'true';
+        loaderHotspots.forEach(h => h.style.display = show ? 'block' : 'none');
       });
 
-      // Hotspot click interaction
       viewer.addEventListener('click', (event) => {
         const hotspot = event.target.closest('.Hotspot');
         if (hotspot) {
