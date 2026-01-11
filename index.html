@@ -7,34 +7,36 @@
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
     
     <style>
-      body { 
-        margin: 0; 
-        font-family: sans-serif; 
-        display: flex; 
-        flex-direction: column; 
-        height: 100vh; 
-      }
+      body { margin: 0; font-family: sans-serif; display: flex; flex-direction: column; height: 100vh; }
 
-      /* Logo Header */
       .header {
-        padding: 15px;
+        padding: 10px 15px;
         display: flex;
-        justify-content: center;
+        flex-direction: column;
+        align-items: center;
         background: white;
         border-bottom: 2px solid #00837d; /* YunExpress Teal */
       }
-      .header img {
-        height: 60px; 
-        width: auto;
+      .header img { height: 50px; width: auto; margin-bottom: 10px; }
+
+      /* Model Selector Styling */
+      .controls {
+        margin-bottom: 10px;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+      select {
+        padding: 8px;
+        border-radius: 5px;
+        border: 1px solid #00837d;
+        color: #00837d;
+        font-weight: bold;
       }
 
-      model-viewer {
-        flex-grow: 1;
-        width: 100%;
-        background-color: #eeeeee;
-      }
+      model-viewer { flex-grow: 1; width: 100%; background-color: #eeeeee; }
 
-      /* Hotspot Design */
+      /* Hotspot Styling */
       .Hotspot {
         background: #00837d; 
         border-radius: 50%;
@@ -45,12 +47,8 @@
         width: 22px;
         padding: 0;
       }
+      .Hotspot.selected { background: #f8a51b; }
 
-      .Hotspot.selected {
-        background: #f8a51b; /* YunExpress Yellow */
-      }
-
-      /* Annotation Labels */
       .HotspotAnnotation {
         display: none; 
         background: #ffffff;
@@ -64,14 +62,12 @@
         top: 32px;
         left: 50%;
         transform: translateX(-50%);
-        white-space: nowrap;
-        pointer-events: none;
+        white-space: pre-wrap;
+        width: max-content;
+        max-width: 200px;
         border-top: 3px solid #00837d;
       }
-
-      .Hotspot.selected .HotspotAnnotation {
-        display: block;
-      }
+      .Hotspot.selected .HotspotAnnotation { display: block; }
 
       #ar-button {
         background-color: #ffffff;
@@ -92,11 +88,19 @@
 
     <header class="header">
       <img src="logo.jpeg" alt="YunExpress Logo">
+      <div class="controls">
+        <label for="model-select">Choose Model:</label>
+        <select id="model-select">
+          <option value="tld_121_aircraft_loader-2.glb">Aircraft Loader (TLD 121)</option>
+          <option value="model.glb">Standard Model</option>
+          <option value="212.glb">Model 212</option>
+        </select>
+      </div>
     </header>
 
     <model-viewer 
       id="main-viewer"
-      src="212.glb" 
+      src="tld_121_aircraft_loader-2.glb" 
       ios-src="212.usdz"
       ar 
       ar-modes="webxr scene-viewer quick-look" 
@@ -107,42 +111,48 @@
       auto-rotate
       min-hotspot-opacity="0.5">
       
-      <button class="Hotspot" slot="hotspot-1" data-position="-0.13155839312821627m 0.0376686826955816m -0.6519733882664832m" data-normal="-1m 0m 0m">
-          <div class="HotspotAnnotation">Engine</div>
+      <button class="Hotspot" slot="hotspot-1" data-position="0.22957610886389085m 0.7674381325054367m -0.38064573406698754m" data-normal="0.015376133332711274m 0.18512307178201293m 0.9825950451827684m">
+          <div class="HotspotAnnotation">controls<br>User controls</div>
       </button>
 
-      <button class="Hotspot" slot="hotspot-2" data-position="0.24329702029745348m 0.7251689785843767m -0.3787829279899597m" data-normal="0m 0m 1m">
-          <div class="HotspotAnnotation">Controls</div>
+      <button class="Hotspot" slot="hotspot-2" data-position="-0.14377078479258093m 0.05440645236415009m -0.41308662691942916m" data-normal="-0.9999999999999928m 5.134218897523634e-8m -1.1010624430961752e-7m">
+          <div class="HotspotAnnotation">Driving Wheels</div>
       </button>
 
-      <button class="Hotspot" slot="hotspot-3" data-position="-0.011832628759229247m 0.679622714407742m 0.332448877077804m" data-normal="0m 1m 0m">
+      <button class="Hotspot" slot="hotspot-3" data-position="-0.21859271407197248m 0.679622714407742m 0.3771686065408919m" data-normal="0m 1m 0m">
           <div class="HotspotAnnotation">Main Deck</div>
       </button>
 
-      <button class="Hotspot" slot="hotspot-5" data-position="0.1324610209327211m 0.03764510645109026m -0.4058360906218339m" data-normal="0.9987297742578406m -0.03077976992658189m 0.039892903806939564m">
-          <div class="HotspotAnnotation">Main Drive</div>
+      <button class="Hotspot" slot="hotspot-4" data-position="0.13054242730140686m 0.1206078737734293m -0.6330383715687082m" data-normal="1m 0m 0m">
+          <div class="HotspotAnnotation">Engine</div>
       </button>
 
-      <button slot="ar-button" id="ar-button">
-        👋 VIEW IN YOUR SPACE
-      </button>
-
+      <button slot="ar-button" id="ar-button">👋 VIEW IN YOUR SPACE</button>
     </model-viewer>
 
     <script>
-      // Logic to toggle annotations when clicking the dots
       const viewer = document.querySelector('#main-viewer');
+      const modelSelect = document.querySelector('#model-select');
+
+      // 1. Logic to change models
+      modelSelect.addEventListener('change', (event) => {
+        const newModel = event.target.value;
+        viewer.src = newModel;
+        
+        // Note: Different models often need different hotspots. 
+        // If the hotspots shouldn't show on all models, you'd hide them here.
+      });
+
+      // 2. Logic to toggle annotations
       viewer.addEventListener('click', (event) => {
         const hotspot = event.target.closest('.Hotspot');
         if (hotspot) {
           hotspot.classList.toggle('selected');
-          // Close other hotspots if one is selected
           document.querySelectorAll('.Hotspot').forEach(h => {
             if (h !== hotspot) h.classList.remove('selected');
           });
         }
       });
     </script>
-
   </body>
 </html>
