@@ -7,16 +7,36 @@
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
     
     <style>
-      body { margin: 0; font-family: sans-serif; }
+      body { 
+        margin: 0; 
+        font-family: sans-serif; 
+        display: flex; 
+        flex-direction: column; 
+        height: 100vh; 
+      }
+
+      /* Logo Header Styling */
+      .header {
+        padding: 10px;
+        display: flex;
+        justify-content: center;
+        background: white;
+        border-bottom: 1px solid #ddd;
+      }
+      .header img {
+        height: 50px; /* Adjust size as needed */
+        width: auto;
+      }
+
       model-viewer {
-        width: 100vw;
-        height: 100vh;
+        flex-grow: 1; /* Takes up remaining vertical space */
+        width: 100%;
         background-color: #eeeeee;
       }
 
-      /* This makes the hotspot dots visible */
+      /* Hotspot Styling */
       .Hotspot {
-        background: #4285f4; /* Bright Blue */
+        background: #4285f4;
         border-radius: 50%;
         border: 2px solid #ffffff;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
@@ -24,28 +44,30 @@
         height: 20px;
         width: 20px;
         padding: 0;
-        display: block; /* Ensures it isn't hidden */
       }
 
-      /* This makes the labels visible */
+      /* Hotspot Annotation (Hidden by default) */
       .HotspotAnnotation {
+        display: none; 
         background: #ffffff;
         border-radius: 4px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
         color: #000000;
-        display: block;
-        font-size: 12px;
+        font-size: 14px;
         font-weight: bold;
-        padding: 4px 8px;
+        padding: 8px 12px;
         position: absolute;
-        top: 25px; /* Positions label below the dot */
+        top: 30px;
         left: 50%;
         transform: translateX(-50%);
         white-space: nowrap;
+        pointer-events: none;
       }
 
-      /* Hide labels by default if you want a cleaner look, 
-         but for testing, we keep them 'block' */
+      /* Class to show annotation when active */
+      .Hotspot.selected .HotspotAnnotation {
+        display: block;
+      }
 
       #ar-button {
         background-color: #ffffff;
@@ -62,6 +84,10 @@
     </style>
   </head>
   <body>
+
+    <header class="header">
+      <img src="_logo.jpeg" alt="YunExpress Logo">
+    </header>
 
     <model-viewer 
       src="212.glb" 
@@ -96,6 +122,20 @@
       </button>
 
     </model-viewer>
+
+    <script>
+      const hotspots = document.querySelectorAll('.Hotspot');
+      
+      hotspots.forEach((hotspot) => {
+        hotspot.addEventListener('click', () => {
+          // Toggle the 'selected' class on click
+          hotspot.classList.toggle('selected');
+          
+          // Optional: Close other hotspots when one is opened
+          hotspots.forEach(h => { if(h !== hotspot) h.classList.remove('selected'); });
+        });
+      });
+    </script>
 
   </body>
 </html>
