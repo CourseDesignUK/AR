@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>YunExpress 3D Viewer</title>
+    <title>YunExpress 3D Model Viewer</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
@@ -31,35 +31,38 @@
 
       model-viewer { flex-grow: 1; width: 100%; background-color: #eeeeee; }
 
-      /* Hotspot Styling */
+      /* HUGE TESTING HOTSPOTS - RED FOR VISIBILITY */
       .Hotspot {
-        background: #00837d; 
+        background: #ff0000; 
         border-radius: 50%;
-        border: 2px solid #ffffff;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        border: 4px solid #ffffff;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
         cursor: pointer;
-        height: 22px;
-        width: 22px;
+        height: 40px; 
+        width: 40px;
         padding: 0;
+        display: block;
       }
+
       .Hotspot.selected { background: #f8a51b; }
+
       .HotspotAnnotation {
         display: none; 
         background: #ffffff;
         border-radius: 4px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
         color: #333;
-        font-size: 14px;
+        font-size: 16px;
         font-weight: bold;
-        padding: 8px 12px;
+        padding: 10px;
         position: absolute;
-        top: 32px;
+        top: 50px;
         left: 50%;
         transform: translateX(-50%);
-        white-space: pre-wrap;
-        width: max-content;
+        white-space: nowrap;
         border-top: 3px solid #00837d;
       }
+
       .Hotspot.selected .HotspotAnnotation { display: block; }
 
       #ar-button {
@@ -87,6 +90,7 @@
           <option value="tld_121_aircraft_loader-2.glb" data-ios="212.usdz" data-show-hotspots="true">Aircraft Loader</option>
           <option value="model.glb" data-ios="777.usdz" data-show-hotspots="false">Boeing 777</option>
           <option value="Jet.glb" data-ios="Jet.usdz" data-show-hotspots="false">Jet Engine</option>
+          <option value="911.glb" data-ios="9ll.usdz" data-show-hotspots="false">Porsche 911</option>
         </select>
       </div>
     </header>
@@ -100,15 +104,27 @@
       camera-controls 
       shadow-intensity="1"
       tone-mapping="neutral"
-      auto-rotate>
+      auto-rotate
+      min-hotspot-opacity="0.8">
       
-      <button class="Hotspot loader-only" slot="hotspot-1" data-position="0.2295m 0.7674m -0.3806m" data-normal="0.015m 0.185m 0.982m">
+      <button class="Hotspot loader-only" slot="hotspot-1" 
+        data-position="0.22957610886389085m 0.7674381325054367m -0.38064573406698754m" 
+        data-normal="0.015376133332711274m 0.18512307178201293m 0.9825950451827684m"
+        data-visibility-attribute="visible">
           <div class="HotspotAnnotation">controls<br>User controls</div>
       </button>
-      <button class="Hotspot loader-only" slot="hotspot-2" data-position="-0.1437m 0.0544m -0.4130m" data-normal="-1m 0m 0m">
+
+      <button class="Hotspot loader-only" slot="hotspot-2" 
+        data-position="-0.14377078479258093m 0.05440645236415009m -0.41308662691942916m" 
+        data-normal="-1m 0m 0m"
+        data-visibility-attribute="visible">
           <div class="HotspotAnnotation">Driving Wheels</div>
       </button>
-      <button class="Hotspot loader-only" slot="hotspot-3" data-position="-0.2185m 0.6796m 0.3771m" data-normal="0m 1m 0m">
+
+      <button class="Hotspot loader-only" slot="hotspot-3" 
+        data-position="-0.21859271407197248m 0.679622714407742m 0.3771686065408919m" 
+        data-normal="0m 1m 0m"
+        data-visibility-attribute="visible">
           <div class="HotspotAnnotation">Main Deck</div>
       </button>
 
@@ -123,11 +139,11 @@
       modelSelect.addEventListener('change', (event) => {
         const selectedOption = event.target.selectedOptions[0];
         
-        // Update Model Sources (GLB for Web/Android, USDZ for iOS)
+        // Update Model Sources
         viewer.src = selectedOption.value;
         viewer.iosSrc = selectedOption.getAttribute('data-ios');
 
-        // Toggle Hotspots: Only visible if 'data-show-hotspots' is true
+        // Toggle Hotspots: Only show for Loader
         const showHotspots = selectedOption.getAttribute('data-show-hotspots') === 'true';
         loaderHotspots.forEach(h => h.style.display = showHotspots ? 'block' : 'none');
       });
