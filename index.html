@@ -27,21 +27,21 @@
         border-radius: 6px;
         font-weight: bold;
         color: #00837d;
+        background: white;
       }
 
       model-viewer { flex-grow: 1; width: 100%; background-color: #222; }
 
-      /* GIANT PULSING TEST HOTSPOTS */
+      /* HUGE PULSING HOTSPOTS FOR TESTING */
       .Hotspot {
-        background: #ff0000 !important; /* Bright Red */
+        background: #ff0000 !important;
         border-radius: 50%;
         border: 4px solid #fff;
         width: 50px !important; 
         height: 50px !important;
         padding: 0;
         cursor: pointer;
-        position: relative;
-        z-index: 999; /* Force to front */
+        z-index: 999;
         box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
         animation: pulse 1.5s infinite;
       }
@@ -80,19 +80,20 @@
         transform: translateX(-50%);
         font-weight: bold;
         color: #00837d;
+        z-index: 10;
       }
     </style>
   </head>
   <body>
 
     <header class="header">
-      <img src="logo.jpeg" alt="YunExpress">
+      <img src="logo.jpeg" alt="YunExpress Logo">
       <div class="controls">
         <select id="model-select">
           <option value="tld_121_aircraft_loader-2.glb" data-ios="212.usdz" data-show-hotspots="true">Aircraft Loader</option>
           <option value="model.glb" data-ios="777.usdz" data-show-hotspots="false">Boeing 777</option>
           <option value="Jet.glb" data-ios="Jet.usdz" data-show-hotspots="false">Jet Engine</option>
-          <option value="911.glb" data-ios="9ll.usdz" data-show-hotspots="false">Porsche 911</option>
+          <option value="911.glb" data-ios="Porsche.usdz" data-show-hotspots="false">Porsche 911</option>
         </select>
       </div>
     </header>
@@ -102,6 +103,7 @@
       src="tld_121_aircraft_loader-2.glb" 
       ios-src="212.usdz"
       ar 
+      ar-modes="webxr scene-viewer quick-look"
       camera-controls 
       min-hotspot-opacity="1" 
       shadow-intensity="1">
@@ -118,7 +120,7 @@
           <div class="HotspotAnnotation">Front Wheel</div>
       </button>
 
-      <button slot="ar-button" id="ar-button">VIEW IN AR</button>
+      <button slot="ar-button" id="ar-button">👋 VIEW IN YOUR SPACE</button>
     </model-viewer>
 
     <script>
@@ -128,13 +130,17 @@
 
       modelSelect.addEventListener('change', (event) => {
         const selected = event.target.selectedOptions[0];
+        
+        // Update both GLB and USDZ sources
         viewer.src = selected.value;
         viewer.iosSrc = selected.getAttribute('data-ios');
 
+        // Toggle hotspot visibility based on selected model
         const show = selected.getAttribute('data-show-hotspots') === 'true';
         loaderHotspots.forEach(h => h.style.display = show ? 'block' : 'none');
       });
 
+      // Hotspot click to toggle annotation text
       viewer.addEventListener('click', (event) => {
         const hotspot = event.target.closest('.Hotspot');
         if (hotspot) {
