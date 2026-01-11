@@ -15,7 +15,7 @@
         height: 100vh; 
       }
 
-      /* Logo Header Styling */
+      /* Logo Header */
       .header {
         padding: 15px;
         display: flex;
@@ -34,7 +34,7 @@
         background-color: #eeeeee;
       }
 
-      /* Hotspot Styling - Using YunExpress Teal */
+      /* Hotspot Design */
       .Hotspot {
         background: #00837d; 
         border-radius: 50%;
@@ -46,12 +46,11 @@
         padding: 0;
       }
 
-      /* Selected/Clicked State - Using YunExpress Yellow */
       .Hotspot.selected {
-        background: #f8a51b; 
-        outline: none;
+        background: #f8a51b; /* YunExpress Yellow */
       }
 
+      /* Annotation Labels */
       .HotspotAnnotation {
         display: none; 
         background: #ffffff;
@@ -96,7 +95,8 @@
     </header>
 
     <model-viewer 
-      src="model.glb" 
+      id="main-viewer"
+      src="212.glb" 
       ios-src="212.usdz"
       ar 
       ar-modes="webxr scene-viewer quick-look" 
@@ -130,12 +130,17 @@
     </model-viewer>
 
     <script>
-      const hotspots = document.querySelectorAll('.Hotspot');
-      hotspots.forEach((hotspot) => {
-        hotspot.addEventListener('click', () => {
+      // Logic to toggle annotations when clicking the dots
+      const viewer = document.querySelector('#main-viewer');
+      viewer.addEventListener('click', (event) => {
+        const hotspot = event.target.closest('.Hotspot');
+        if (hotspot) {
           hotspot.classList.toggle('selected');
-          hotspots.forEach(h => { if(h !== hotspot) h.classList.remove('selected'); });
-        });
+          // Close other hotspots if one is selected
+          document.querySelectorAll('.Hotspot').forEach(h => {
+            if (h !== hotspot) h.classList.remove('selected');
+          });
+        }
       });
     </script>
 
