@@ -10,8 +10,8 @@
     <style>
         :root {
             --app-bg: #0b0e14;
-            --yun-orange: #ff6a00; /* Signature YunExpress Orange */
-            --yun-blue: #003366;   /* Deep Logistics Blue */
+            --yun-orange: #ff6a00; 
+            --yun-blue: #003366;   
             --glass: rgba(255, 255, 255, 0.03);
             --glass-border: rgba(255, 255, 255, 0.08);
             --accent: #ff9d5c;
@@ -123,6 +123,8 @@
             font-size: 15px; width: 100%; text-overflow: ellipsis;
         }
 
+        option { background: #161b22; color: white; }
+
         .factsheet-btn {
             background: var(--yun-orange); 
             color: white; border: none;
@@ -133,7 +135,7 @@
         }
         .factsheet-btn:hover { transform: scale(1.05); }
 
-        /* --- CARGO SPECS PANEL --- */
+        /* --- SPECS PANEL --- */
         .details-panel {
             position: absolute; top: 0; right: -100%;
             width: 100%; max-width: 400px; height: 100%;
@@ -169,7 +171,7 @@
         <div class="radar"></div>
         <div class="start-ui">
             <div class="yun-logo">YUN</div>
-            <h1 class="title-main">Fleet Visualizer</h1>
+            <h1 class="title-main">Ground Assets Tracker</h1>
             <div id="boot-logs" class="boot-logs">Establishing Logistics Link...</div>
             <button class="commence-btn" onclick="enterApp()">Initialize Link</button>
         </div>
@@ -177,17 +179,17 @@
 
     <div id="details-panel" class="details-panel">
         <div class="details-inner">
-            <div class="spec-label" style="color:var(--yun-orange)">Service Tier: Global Priority</div>
+            <div class="spec-label" style="color:var(--yun-orange)">Classification: Ground Support</div>
             <h2 id="asset-title" style="margin: 10px 0; font-size: 26px; text-transform: uppercase; font-weight: 300;">Asset Name</h2>
             
             <div class="spec-grid">
-                <div class="spec-item"><span class="spec-label">Transit Capacity</span><span id="spec-crew" class="spec-value">-</span></div>
-                <div class="spec-item"><span class="spec-label">Distribution Hub</span><span id="spec-base" class="spec-value">-</span></div>
+                <div class="spec-item"><span class="spec-label">Operated By</span><span id="spec-crew" class="spec-value">-</span></div>
+                <div class="spec-item"><span class="spec-label">Primary Zone</span><span id="spec-base" class="spec-value">-</span></div>
                 <div class="spec-item"><span class="spec-label">Total Length</span><span id="spec-length" class="spec-value">-</span></div>
-                <div class="spec-item"><span class="spec-label">Gross Weight</span><span id="spec-weight" class="spec-value">-</span></div>
-                <div class="spec-item full-width"><span class="spec-label">Max Cargo Volume</span><span id="spec-payload" class="spec-value">-</span></div>
-                <div class="spec-item full-width"><span class="spec-label">Security Protocol</span><span id="spec-weapons" class="spec-value">-</span></div>
-                <div class="spec-item full-width"><span class="spec-label">Service Route Details</span><span id="spec-desc" class="spec-value" style="font-family: inherit; line-height: 1.5; font-weight: 300; opacity: 0.8;">-</span></div>
+                <div class="spec-item"><span class="spec-label">Unit Weight</span><span id="spec-weight" class="spec-value">-</span></div>
+                <div class="spec-item full-width"><span class="spec-label">Max Capacity/Output</span><span id="spec-payload" class="spec-value">-</span></div>
+                <div class="spec-item full-width"><span class="spec-label">Safety Status</span><span id="spec-weapons" class="spec-value">-</span></div>
+                <div class="spec-item full-width"><span class="spec-label">Operational Profile</span><span id="spec-desc" class="spec-value" style="line-height: 1.5; font-weight: 300; opacity: 0.8;">-</span></div>
             </div>
             
             <button onclick="toggleDetails()" style="margin-top: 40px; background: var(--yun-orange); border: none; color: white; padding: 14px; width: 100%; border-radius: 8px; cursor: pointer; font-weight: bold; text-transform: uppercase; font-size: 11px;">Return to Tracker</button>
@@ -197,12 +199,12 @@
     <div class="app-overlay">
         <div class="control-panel">
             <div class="panel-info">
-                <span class="panel-label">Fleet Telemetry</span>
+                <span class="panel-label">GSE Telemetry</span>
                 <select id="model-select">
-                    <option>Syncing Hub...</option>
+                    <option>Loading Assets...</option>
                 </select>
             </div>
-            <button class="factsheet-btn" onclick="toggleDetails()">Cargo Specs</button>
+            <button class="factsheet-btn" onclick="toggleDetails()">Specs</button>
         </div>
     </div>
 
@@ -218,20 +220,66 @@
     </model-viewer>
 
 <script>
-    const logs = [
-        "Connecting to Global Hub...", 
-        "Verifying Dispatch API...", 
-        "Syncing Fleet Geometry...", 
-        "Retrieving Cargo Data...", 
-        "Link Active."
+    // Embedded Data to prevent "Hub Offline" errors
+    const modelData = [
+        {
+            "name": "TLD 121 Aircraft Loader",
+            "file": "TLD_121_Aircraft_loader",
+            "usdz_file": "TLD_121_Aircraft_loader",
+            "crew": "1 Specialist Operator",
+            "base": "Cargo Apron Zone A",
+            "length": "8.2 m",
+            "weight": "12,500 kg",
+            "payload": "7,000 kg Main Deck",
+            "weapons": "Certified Safe",
+            "description": "Critical logistics asset for loading containerized cargo onto YunExpress heavy-lift aircraft."
+        },
+        {
+            "name": "Airport Baggage Truck",
+            "file": "Airport_Baggage_Truck",
+            "usdz_file": "Airport_Baggage_Truck",
+            "crew": "1 Logistics Driver",
+            "base": "Sorting Center",
+            "length": "3.5 m",
+            "weight": "2,200 kg",
+            "payload": "Multiple Cargo Dollies",
+            "weapons": "Beacon Active",
+            "description": "Rapid transit vehicle used to move high-priority parcels from sorting to the runway."
+        },
+        {
+            "name": "Airport Catering Truck",
+            "file": "Airport_Catering_Truck",
+            "usdz_file": "Airport_Catering_Truck",
+            "crew": "2 Ground Staff",
+            "base": "Service Point",
+            "length": "9.5 m",
+            "weight": "15,000 kg",
+            "payload": "High-Lift Galley Supply",
+            "weapons": "RFID Tracked",
+            "description": "Specialized high-lift truck providing essential cabin services for long-haul crews."
+        },
+        {
+            "name": "Ground Power Unit (GPU)",
+            "file": "GPU_Aiport_Ground_Power_Unit",
+            "usdz_file": "GPU_Aiport_Ground_Power_Unit",
+            "crew": "Autonomous / Manual",
+            "base": "Stand 42-60",
+            "length": "4.2 m",
+            "weight": "2,800 kg",
+            "payload": "90 kVA Electric Feed",
+            "weapons": "Standard Compliance",
+            "description": "Powers onboard electronics and climate control while the main engines are powered down for loading."
+        }
     ];
+
+    const logs = ["Connecting...", "Syncing GSE Data...", "Verifying USDZ Links...", "Active."];
     let logIndex = 0;
 
     function updateLogs() {
         if (logIndex < logs.length) {
             document.getElementById('boot-logs').innerText = logs[logIndex];
             logIndex++;
-            setTimeout(updateLogs, 700);
+            setTimeout(updateLogs, 600);
         }
     }
     updateLogs();
@@ -244,32 +292,25 @@
 
     const viewer = document.querySelector('#main-viewer');
     const modelSelect = document.querySelector('#model-select');
-    let modelData = [];
 
     function toggleDetails() {
         document.getElementById('details-panel').classList.toggle('active');
     }
 
-    async function initializeApp() {
-        try {
-            // Replace 'models.json' with your actual endpoint or file
-            const response = await fetch('models.json');
-            modelData = await response.json();
-            modelSelect.innerHTML = ''; 
-            modelData.forEach((m, index) => {
-                const opt = document.createElement('option');
-                opt.value = index;
-                opt.textContent = m.name;
-                modelSelect.appendChild(opt);
-            });
-            if (modelData.length > 0) updateAsset(0);
-        } catch (e) {
-            modelSelect.innerHTML = '<option>HUB OFFLINE</option>';
-        }
+    function initializeApp() {
+        modelSelect.innerHTML = ''; 
+        modelData.forEach((m, index) => {
+            const opt = document.createElement('option');
+            opt.value = index;
+            opt.textContent = m.name;
+            modelSelect.appendChild(opt);
+        });
+        updateAsset(0);
     }
 
     function updateAsset(index) {
         const asset = modelData[index];
+        // Note: Make sure .glb files exist with these names or update extension to .usdz if only using iOS
         viewer.src = `models/${asset.file}.glb`;
         
         if (asset.usdz_file) {
@@ -277,16 +318,18 @@
         }
         
         document.getElementById('asset-title').textContent = asset.name;
-        document.getElementById('spec-crew').textContent = asset.crew || "Standard Crew";
-        document.getElementById('spec-base').textContent = asset.base || "Intl. Hub";
-        document.getElementById('spec-weapons').textContent = asset.weapons || "RFID Protected";
-        document.getElementById('spec-weight').textContent = asset.weight || "N/A";
-        document.getElementById('spec-length').textContent = asset.length || "N/A";
-        document.getElementById('spec-payload').textContent = asset.payload || "N/A";
-        document.getElementById('spec-desc').textContent = asset.description || "Logistics asset details unavailable.";
+        document.getElementById('spec-crew').textContent = asset.crew;
+        document.getElementById('spec-base').textContent = asset.base;
+        document.getElementById('spec-weapons').textContent = asset.weapons;
+        document.getElementById('spec-weight').textContent = asset.weight;
+        document.getElementById('spec-length').textContent = asset.length;
+        document.getElementById('spec-payload').textContent = asset.payload;
+        document.getElementById('spec-desc').textContent = asset.description;
     }
 
     modelSelect.addEventListener('change', (e) => updateAsset(e.target.value));
+    
+    // Start Init
     initializeApp();
 </script>
 
