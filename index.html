@@ -11,7 +11,7 @@
         :root {
             --app-bg: #0b0e14;
             --yun-orange: #ff6a00; 
-            --yun-blue: #003366;    
+            --yun-blue: #003366;   
             --glass: rgba(255, 255, 255, 0.03);
             --glass-border: rgba(255, 255, 255, 0.08);
             --accent: #ff9d5c;
@@ -20,7 +20,7 @@
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
             overflow: hidden; background-color: var(--app-bg);
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Inter', 'Segoe UI', Roboto, sans-serif;
         }
 
         /* --- START SCREEN --- */
@@ -38,7 +38,7 @@
 
         .radar {
             position: absolute;
-            width: 300px; height: 300px;
+            width: 450px; height: 450px;
             border: 1px solid rgba(255, 106, 0, 0.15);
             border-radius: 50%;
             pointer-events: none;
@@ -68,7 +68,7 @@
         }
 
         .title-main { 
-            font-size: 18px; color: white; letter-spacing: 4px; 
+            font-size: 20px; color: white; letter-spacing: 4px; 
             text-transform: uppercase; margin-bottom: 5px; font-weight: 300;
         }
         .boot-logs { 
@@ -80,9 +80,8 @@
             background: transparent; color: white; border: 1px solid var(--yun-orange);
             padding: 14px 35px; border-radius: 4px; letter-spacing: 2px; font-weight: bold;
             cursor: pointer; transition: all 0.3s; text-transform: uppercase;
-            -webkit-tap-highlight-color: transparent;
         }
-        .commence-btn:hover { background: var(--yun-orange); }
+        .commence-btn:hover { background: var(--yun-orange); box-shadow: 0 0 20px rgba(255, 106, 0, 0.4); }
 
         /* --- MAIN VIEWER & UI --- */
         model-viewer {
@@ -99,42 +98,63 @@
 
         .control-panel {
             background: var(--glass); 
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--glass-border);
-            padding: 12px 18px; border-radius: 16px;
-            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 18px; 
+            border-radius: 16px;
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
             gap: 15px;
         }
 
-        .panel-info { display: flex; flex-direction: column; flex-grow: 1; overflow: hidden; }
-        .panel-label { font-size: 9px; color: var(--accent); text-transform: uppercase; font-weight: 800; letter-spacing: 1.5px; }
+        .panel-info {
+            display: flex; flex-direction: column; flex-grow: 1; overflow: hidden;
+        }
+
+        .panel-label {
+            font-size: 9px;
+            color: var(--accent);
+            text-transform: uppercase;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+        }
 
         select {
             background: transparent; color: white; border: none;
             font-weight: bold; outline: none; cursor: pointer;
             font-size: 15px; width: 100%; text-overflow: ellipsis;
-            appearance: none; -webkit-appearance: none;
         }
+
+        option { background: #161b22; color: white; }
 
         .factsheet-btn {
-            background: var(--yun-orange); color: white; border: none;
-            padding: 10px 16px; border-radius: 8px; font-size: 10px; font-weight: 800; 
+            background: var(--yun-orange); 
+            color: white; border: none;
+            padding: 10px 16px; border-radius: 8px; 
+            font-size: 10px; font-weight: 800; 
             cursor: pointer; text-transform: uppercase;
+            white-space: nowrap; transition: transform 0.2s;
         }
+        .factsheet-btn:hover { transform: scale(1.05); }
 
-        /* --- DETAILS PANEL --- */
+        /* --- SPECS PANEL --- */
         .details-panel {
             position: absolute; top: 0; right: -100%;
             width: 100%; max-width: 400px; height: 100%;
-            background: rgba(11, 14, 20, 0.98); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
-            z-index: 300; transition: right 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            background: rgba(11, 14, 20, 0.98); backdrop-filter: blur(30px);
+            z-index: 300; transition: right 0.6s cubic-bezier(0.16, 1, 0.3, 1);
             color: white; border-left: 1px solid var(--glass-border);
             overflow-y: auto;
         }
         .details-panel.active { right: 0; }
         .details-inner { padding: 40px 30px; }
         
-        .spec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 25px; }
+        .spec-grid {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 20px; margin-top: 25px;
+        }
         .spec-item { border-bottom: 1px solid var(--glass-border); padding-bottom: 12px; }
         .full-width { grid-column: span 2; }
         .spec-label { font-size: 9px; color: var(--accent); text-transform: uppercase; font-weight: 800; }
@@ -145,15 +165,7 @@
             background: white; color: black; border: none;
             padding: 16px 32px; border-radius: 8px; font-weight: 800;
             cursor: pointer; z-index: 50; text-transform: uppercase; font-size: 12px;
-        }
-
-        /* Loading Indicator */
-        #model-loader {
-            position: absolute; top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            color: white; font-size: 12px; font-weight: bold;
-            text-transform: uppercase; letter-spacing: 2px;
-            display: none; pointer-events: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
     </style>
 </head>
@@ -200,8 +212,6 @@
         </div>
     </div>
 
-    <div id="model-loader">Downloading 3D Data...</div>
-
     <model-viewer id="main-viewer" 
                   loading="eager" 
                   ar 
@@ -212,33 +222,85 @@
                   environment-image="neutral" 
                   exposure="1.2"
                   camera-orbit="45deg 75deg 105%"
-                  touch-action="pan-y"
                   interaction-prompt="none">
-        <button slot="ar-button" id="ar-button">Deploy to Workspace</button>
+        <button slot="ar-button" id="ar-button">Deploy USDZ to Workspace</button>
     </model-viewer>
 
 <script>
-    let modelData = [];
-    const viewer = document.querySelector('#main-viewer');
-    const modelSelect = document.querySelector('#model-select');
-    const loaderLabel = document.getElementById('model-loader');
+    const modelData = [
+        {
+            "name": "TLD 121 Aircraft Loader",
+            "file": "TLD_121_Aircraft_loader",
+            "crew": "1 Specialist Operator",
+            "base": "Cargo Apron Zone A",
+            "length": "8.2 m",
+            "weight": "12,500 kg",
+            "payload": "7,000 kg Main Deck",
+            "weapons": "Certified Safe",
+            "description": "Critical logistics asset for loading containerized cargo onto YunExpress heavy-lift aircraft."
+        },
+        {
+            "name": "Airport Baggage Truck",
+            "file": "Airport_Baggage_Truck",
+            "crew": "1 Logistics Driver",
+            "base": "Sorting Center",
+            "length": "3.5 m",
+            "weight": "2,200 kg",
+            "payload": "Multiple Cargo Dollies",
+            "weapons": "Beacon Active",
+            "description": "Rapid transit vehicle used to move high-priority parcels from sorting to the runway."
+        },
+        {
+            "name": "Airport Catering Truck",
+            "file": "Airport_Catering_Truck",
+            "crew": "2 Ground Staff",
+            "base": "Service Point",
+            "length": "9.5 m",
+            "weight": "15,000 kg",
+            "payload": "High-Lift Galley Supply",
+            "weapons": "RFID Tracked",
+            "description": "Specialized high-lift truck providing essential cabin services for long-haul crews."
+        },
+        {
+            "name": "Ground Power Unit (GPU)",
+            "file": "GPU_Aiport_Ground_Power_Unit",
+            "crew": "Autonomous / Manual",
+            "base": "Stand 42-60",
+            "length": "4.2 m",
+            "weight": "2,800 kg",
+            "payload": "90 kVA Electric Feed",
+            "weapons": "Standard Compliance",
+            "description": "Powers onboard electronics and climate control while the main engines are powered down."
+        }
+    ];
 
-    // 1. Fetch JSON Data
-    async function loadJson() {
-        try {
-            // Using relative path for GitHub Pages
-            const response = await fetch('./models.json');
-            if (!response.ok) throw new Error('Network response was not ok');
-            modelData = await response.json();
-            setupDropdown();
-        } catch (error) {
-            console.error('Fetch error:', error);
-            document.getElementById('boot-logs').innerText = "Data Link Failed.";
+    const logs = ["Connecting...", "Syncing GSE Data...", "Mapping USDZ Telemetry...", "Active."];
+    let logIndex = 0;
+
+    function updateLogs() {
+        if (logIndex < logs.length) {
+            document.getElementById('boot-logs').innerText = logs[logIndex];
+            logIndex++;
+            setTimeout(updateLogs, 600);
         }
     }
+    updateLogs();
 
-    function setupDropdown() {
-        modelSelect.innerHTML = '';
+    function enterApp() {
+        const startScreen = document.getElementById('start-screen');
+        startScreen.style.opacity = '0';
+        setTimeout(() => startScreen.style.visibility = 'hidden', 800);
+    }
+
+    const viewer = document.querySelector('#main-viewer');
+    const modelSelect = document.querySelector('#model-select');
+
+    function toggleDetails() {
+        document.getElementById('details-panel').classList.toggle('active');
+    }
+
+    function initializeApp() {
+        modelSelect.innerHTML = ''; 
         modelData.forEach((m, index) => {
             const opt = document.createElement('option');
             opt.value = index;
@@ -250,12 +312,9 @@
 
     function updateAsset(index) {
         const asset = modelData[index];
-        if(!asset) return;
-
-        // Visual feedback during load
-        loaderLabel.style.display = 'block';
-
-        // Update Paths (relative to root)
+        
+        // Point to the models folder. 
+        // Note: Browsers need .glb for display, ios-src uses .usdz for AR mode.
         viewer.src = `models/${asset.file}.glb`;
         viewer.setAttribute('ios-src', `models/${asset.file}.usdz`);
         
@@ -270,43 +329,10 @@
         document.getElementById('spec-desc').textContent = asset.description;
     }
 
-    // Hide loader when model finishes downloading
-    viewer.addEventListener('load', () => {
-        loaderLabel.style.display = 'none';
-        console.log("Model Loaded Successfully");
-    });
-
-    viewer.addEventListener('error', (e) => {
-        console.error("Model Viewer Error:", e);
-        loaderLabel.innerText = "Error Loading 3D Asset";
-    });
-
-    function toggleDetails() {
-        document.getElementById('details-panel').classList.toggle('active');
-    }
-
-    function enterApp() {
-        const startScreen = document.getElementById('start-screen');
-        startScreen.style.opacity = '0';
-        setTimeout(() => startScreen.style.visibility = 'hidden', 800);
-    }
-
-    // Radar/Boot Animation
-    const logs = ["Connecting...", "Syncing GSE Data...", "Mapping USDZ...", "Active."];
-    let logIndex = 0;
-    function updateLogs() {
-        if (logIndex < logs.length) {
-            document.getElementById('boot-logs').innerText = logs[logIndex];
-            logIndex++;
-            setTimeout(updateLogs, 600);
-        }
-    }
-
-    // Initialize
-    updateLogs();
-    loadJson();
-
     modelSelect.addEventListener('change', (e) => updateAsset(e.target.value));
+    
+    // Start Application
+    initializeApp();
 </script>
 
 </body>
