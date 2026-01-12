@@ -3,24 +3,48 @@
     "name": "TLD 121 Aircraft Loader",
     "file": "TLD_121_Aircraft_loader",
     "usdz_file": "TLD_121_Aircraft_loader",
-    "description": "A self-propelled, dual-platform elevator designed to transfer containers and pallets."
+    "crew": "1 Operator",
+    "base": "Cargo Terminal",
+    "length": "8.2 m",
+    "weight": "12,500 kg",
+    "payload": "7,000 kg",
+    "weapons": "Electronic Limiters",
+    "description": "Heavy-duty pallet and container loader for main deck and lower lobe aircraft loading."
   },
   {
     "name": "Airport Baggage Truck",
     "file": "Airport_Baggage_Truck",
     "usdz_file": "Airport_Baggage_Truck",
-    "description": "Ground support vehicle used for the transportation of luggage."
+    "crew": "1 Driver",
+    "base": "Baggage Handling",
+    "length": "3.5 m",
+    "weight": "2,200 kg",
+    "payload": "Multiple Dollies",
+    "weapons": "Standard Safety",
+    "description": "Electric/Diesel tug used for transporting baggage carts between sorting and aircraft."
   },
   {
     "name": "Airport Catering Truck",
     "file": "Airport_Catering_Truck",
     "usdz_file": "Airport_Catering_Truck",
-    "description": "Specialized high-lift vehicle used to deliver galley supplies."
+    "crew": "2 Crew",
+    "base": "Service Hub",
+    "length": "9.5 m",
+    "weight": "15,000 kg",
+    "payload": "4,500 kg",
+    "weapons": "Temperature Controlled",
+    "description": "High-lift vehicle designed for delivering galley supplies to a variety of aircraft heights."
   },
   {
     "name": "Ground Power Unit (GPU)",
     "file": "GPU_Aiport_Ground_Power_Unit",
     "usdz_file": "GPU_Aiport_Ground_Power_Unit",
-    "description": "Mobile power source providing electrical energy to aircraft."
+    "crew": "Remote/Manual",
+    "base": "Apron Parking",
+    "length": "4.2 m",
+    "weight": "2,800 kg",
+    "payload": "90 kVA Output",
+    "weapons": "Overload Protected",
+    "description": "Mobile power unit providing 400Hz electrical power to aircraft while engines are shut down."
   }
 ]
