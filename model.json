@@ -1,15 +1,9 @@
 [
   {
-    "name": "Eurofighter Typhoon FGR4",
+    "name": "TLD_121_Aircraft_loader",
     "file": "typhoon",
-    "usdz_file": "Typhoon",
-    "crew": "1",
-    "base": "RAF Coningsby / Lossiemouth",
-    "length": "15.96 m",
-    "weight": "23,500 kg",
-    "payload": "9,000 kg",
-    "weapons": "Mauser BK-27, AMRAAM, Meteor, ASRAAM, Paveway IV, Brimstone",
-    "description": "The backbone of the RAF. A highly agile multi-role fighter used for Quick Reaction Alerts (QRA) and precision strikes."
+    "usdz_file": "TLD_121_Aircraft_loader",
+    
   },
   {
     "name": "Apache AH-64D",
