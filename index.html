@@ -1,155 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>YunExpress 3D Asset Viewer</title>
+<head>
+    <title>YunExpress iOS Asset Viewer</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
-    
     <style>
-      body { margin: 0; font-family: sans-serif; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        :root { --brand-color: #00837d; }
+        body { 
+            margin: 0; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center;
+            height: 100vh; 
+            background-color: #f5f5f7; 
+        }
 
-      .header {
-        padding: 10px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        background: white;
-        border-bottom: 3px solid #00837d;
-        z-index: 100;
-      }
-      .header img { height: 45px; width: auto; margin-bottom: 8px; }
+        .container {
+            text-align: center;
+            padding: 20px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            width: 85%;
+            max-width: 400px;
+        }
 
-      .controls { display: flex; align-items: center; gap: 10px; }
-      select {
-        padding: 8px;
-        border: 2px solid #00837d;
-        border-radius: 6px;
-        font-weight: bold;
-        color: #00837d;
-        background: white;
-      }
+        .logo { height: 50px; margin-bottom: 20px; }
 
-      model-viewer { flex-grow: 1; width: 100%; background-color: #222; }
+        h2 { color: #333; font-size: 1.2rem; margin-bottom: 20px; }
 
-      /* HUGE PULSING HOTSPOTS FOR TESTING */
-      .Hotspot {
-        background: #ff0000 !important;
-        border-radius: 50%;
-        border: 4px solid #fff;
-        width: 50px !important; 
-        height: 50px !important;
-        padding: 0;
-        cursor: pointer;
-        z-index: 999;
-        box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
-        animation: pulse 1.5s infinite;
-      }
+        select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid var(--brand-color);
+            border-radius: 12px;
+            font-size: 16px;
+            margin-bottom: 25px;
+            background: white;
+            -webkit-appearance: none; /* Safari styling */
+        }
 
-      @keyframes pulse {
-        0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.7); }
-        70% { transform: scale(1.2); box-shadow: 0 0 0 20px rgba(255, 0, 0, 0); }
-        100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 0, 0, 0); }
-      }
+        .view-btn {
+            display: inline-block;
+            background-color: var(--brand-color);
+            color: white;
+            padding: 18px 30px;
+            border-radius: 14px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 18px;
+            transition: transform 0.2s ease;
+        }
 
-      .HotspotAnnotation {
-        display: none;
-        background: white;
-        color: black;
-        padding: 10px;
-        border-radius: 8px;
-        font-size: 18px;
-        position: absolute;
-        top: 60px;
-        left: 50%;
-        transform: translateX(-50%);
-        border: 2px solid #ff0000;
-        white-space: nowrap;
-      }
+        .view-btn:active { transform: scale(0.95); }
 
-      .Hotspot.selected .HotspotAnnotation { display: block; }
-
-      #ar-button {
-        background: white;
-        border: 2px solid #00837d;
-        border-radius: 10px;
-        padding: 15px 25px;
-        position: absolute;
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        font-weight: bold;
-        color: #00837d;
-        z-index: 10;
-      }
+        .ios-only-note {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #888;
+        }
     </style>
-  </head>
-  <body>
+</head>
+<body>
 
-    <header class="header">
-      <img src="logo.jpeg" alt="YunExpress Logo">
-      <div class="controls">
+    <div class="container">
+        <img src="logo.jpeg" alt="YunExpress" class="logo">
+        <h2>3D Asset Preview</h2>
+
         <select id="model-select">
-          <option value="tld_121_aircraft_loader-2.glb" data-ios="212.usdz" data-show-hotspots="true">Aircraft Loader</option>
-          <option value="model.glb" data-ios="777.usdz" data-show-hotspots="false">Boeing 777</option>
-          <option value="Jet.glb" data-ios="Jet.usdz" data-show-hotspots="false">Jet Engine</option>
-          <option value="911.glb" data-ios="Porsche.usdz" data-show-hotspots="false">Porsche 911</option>
+            <option value="212.usdz">Aircraft Loader</option>
+            <option value="777.usdz">Boeing 777</option>
+            <option value="Jet.usdz">Jet Engine</option>
+            <option value="Porsche.usdz">Porsche 911</option>
         </select>
-      </div>
-    </header>
 
-    <model-viewer 
-      id="main-viewer"
-      src="tld_121_aircraft_loader-2.glb" 
-      ios-src="212.usdz"
-      ar 
-      ar-modes="webxr scene-viewer quick-look"
-      camera-controls 
-      min-hotspot-opacity="1" 
-      shadow-intensity="1">
-      
-      <button class="Hotspot loader-only" slot="hotspot-1" 
-        data-position="0.229576m 0.767438m -0.380645m" 
-        data-normal="0.015m 0.185m 0.982m">
-          <div class="HotspotAnnotation">Controls Area</div>
-      </button>
+        <a id="ar-link" rel="ar" href="212.usdz">
+            <img id="preview-img" src="loader-thumb.jpg" style="display:none;">
+            <span class="view-btn">OPEN IN 3D VIEW</span>
+        </a>
 
-      <button class="Hotspot loader-only" slot="hotspot-2" 
-        data-position="-0.143770m 0.054406m -0.413086m" 
-        data-normal="-1m 0m 0m">
-          <div class="HotspotAnnotation">Front Wheel</div>
-      </button>
-
-      <button slot="ar-button" id="ar-button">👋 VIEW IN YOUR SPACE</button>
-    </model-viewer>
+        <p class="ios-only-note">Note: This viewer is optimized for iPhone/iPad.</p>
+    </div>
 
     <script>
-      const viewer = document.querySelector('#main-viewer');
-      const modelSelect = document.querySelector('#model-select');
-      const loaderHotspots = document.querySelectorAll('.loader-only');
+        const modelSelect = document.querySelector('#model-select');
+        const arLink = document.querySelector('#ar-link');
 
-      modelSelect.addEventListener('change', (event) => {
-        const selected = event.target.selectedOptions[0];
-        
-        // Update both GLB and USDZ sources
-        viewer.src = selected.value;
-        viewer.iosSrc = selected.getAttribute('data-ios');
+        modelSelect.addEventListener('change', (event) => {
+            // Update the link href to the selected USDZ file
+            arLink.href = event.target.value;
+        });
 
-        // Toggle hotspot visibility based on selected model
-        const show = selected.getAttribute('data-show-hotspots') === 'true';
-        loaderHotspots.forEach(h => h.style.display = show ? 'block' : 'none');
-      });
-
-      // Hotspot click to toggle annotation text
-      viewer.addEventListener('click', (event) => {
-        const hotspot = event.target.closest('.Hotspot');
-        if (hotspot) {
-          hotspot.classList.toggle('selected');
-          document.querySelectorAll('.Hotspot').forEach(h => { 
-            if (h !== hotspot) h.classList.remove('selected'); 
-          });
+        // Basic check to alert non-iOS users
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        if (!isIOS) {
+            document.querySelector('h2').innerText = "iOS Device Required for Preview";
+            document.querySelector('.view-btn').style.backgroundColor = "#ccc";
+            document.querySelector('.view-btn').style.pointerEvents = "none";
         }
-      });
     </script>
-  </body>
+
+</body>
 </html>
