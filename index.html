@@ -1,138 +1,27 @@
-<!DOCTYPE html> 
-<html lang="en"> 
-<head> 
-    <title>YUNEXPRESS - GLOBAL FLEET TRACKER</title> 
-    <meta charset="utf-8"> 
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"> 
-     
-    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script> 
-     
-    <style> 
-        :root { 
-            --app-bg: #0b0e14; 
-            --yun-orange: #ff6a00;  
-            --glass: rgba(255, 255, 255, 0.03); 
-            --glass-border: rgba(255, 255, 255, 0.08); 
-            --accent: #ff9d5c; 
-        } 
+<model-viewer id="main-viewer" 
+    camera-controls 
+    auto-rotate 
+    shadow-intensity="1" 
+    environment-image="neutral" 
+    ar 
+    ar-modes="webxr scene-viewer quick-look"
+    loading="lazy"
+    poster="loading_preview.png"> <button slot="ar-button" style="background-color: white; border-radius: 8px; border: none; position: absolute; bottom: 16px; right: 16px; padding: 10px;">
+        👋 View in AR
+    </button>
+</model-viewer>
 
-        body, html { 
-            margin: 0; padding: 0; width: 100%; height: 100%; 
-            overflow: hidden; background-color: var(--app-bg); 
-            font-family: 'Inter', sans-serif; 
-        } 
-
-        /* --- LOADING SCREEN --- */ 
-        #start-screen { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: radial-gradient(circle at center, #161b22 0%, #0b0e14 100%); 
-            z-index: 1000; display: flex; flex-direction: column; 
-            justify-content: center; align-items: center; 
-            transition: opacity 0.8s ease; 
-        } 
-
-        .radar { 
-            position: absolute; width: 400px; height: 400px; 
-            border: 1px solid rgba(255, 106, 0, 0.1); border-radius: 50%; 
-        } 
-        .radar::after { 
-            content: ""; position: absolute; width: 50%; height: 50%; 
-            top: 0; left: 0; background: conic-gradient(from 0deg, var(--yun-orange), transparent 90deg); 
-            border-radius: 100% 0 0 0; transform-origin: 100% 100%; 
-            animation: sweep 4s linear infinite; opacity: 0.3;
-        } 
-        @keyframes sweep { from { transform: rotate(0deg); } to { transform: rotate(360deg); } } 
-
-        .yun-logo { 
-            padding: 10px 20px; font-weight: 900; color: white; 
-            background: var(--yun-orange); border-radius: 4px; 
-            font-style: italic; margin-bottom: 20px; z-index: 1001;
-        } 
-
-        /* --- UI OVERLAYS --- */ 
-        .app-overlay { 
-            position: absolute; top: 20px; left: 50%; transform: translateX(-50%); 
-            z-index: 100; width: 90%; max-width: 500px; 
-        } 
-
-        .control-panel { 
-            background: var(--glass); backdrop-filter: blur(20px); 
-            border: 1px solid var(--glass-border); padding: 12px 18px; 
-            border-radius: 16px; display: flex; justify-content: space-between; align-items: center; 
-        } 
-
-        select { 
-            background: transparent; color: white; border: none; 
-            font-weight: bold; outline: none; font-size: 15px; width: 100%; 
-        } 
-
-        option { background: #161b22; color: white; }
-
-        /* --- DETAILS SIDEBAR --- */ 
-        .details-panel { 
-            position: absolute; top: 0; right: -100%; 
-            width: 100%; max-width: 350px; height: 100%; 
-            background: rgba(11, 14, 20, 0.95); backdrop-filter: blur(20px); 
-            z-index: 300; transition: right 0.5s ease; color: white; 
-            border-left: 1px solid var(--glass-border); padding: 40px 25px;
-        } 
-        .details-panel.active { right: 0; } 
-
-        .spec-item { margin-bottom: 15px; border-bottom: 1px solid var(--glass-border); padding-bottom: 8px; }
-        .spec-label { font-size: 10px; color: var(--accent); text-transform: uppercase; }
-        .spec-value { display: block; font-size: 14px; margin-top: 4px; }
-
-        model-viewer { width: 100vw; height: 100vh; --progress-bar-color: var(--yun-orange); } 
-    </style> 
-</head> 
-<body> 
-
-    <div id="start-screen"> 
-        <div class="radar"></div> 
-        <div class="yun-logo">YUNEXPRESS</div> 
-        <div id="boot-logs" style="color: white; font-family: monospace; font-size: 12px; margin-bottom: 20px;">INITIALIZING...</div> 
-        <button id="entry-btn" style="display:none; padding: 10px 30px; background: transparent; color: white; border: 1px solid var(--yun-orange); cursor: pointer;" onclick="enterApp()">ACCESS TRACKER</button> 
-    </div> 
-
-    <div id="details-panel" class="details-panel"> 
-        <h2 id="asset-title" style="color: var(--yun-orange);">ASSET NAME</h2> 
-        <div id="spec-list">
-            <div class="spec-item"><span class="spec-label">Zone</span><span id="spec-base" class="spec-value">-</span></div>
-            <div class="spec-item"><span class="spec-label">Payload</span><span id="spec-payload" class="spec-value">-</span></div>
-            <div class="spec-item"><span class="spec-label">Profile</span><span id="spec-desc" class="spec-value">-</span></div>
-        </div>
-        <button onclick="toggleDetails()" style="width:100%; padding:10px; background:var(--yun-orange); border:none; color:white; margin-top:20px;">CLOSE SPECS</button>
-    </div> 
-
-    <div class="app-overlay"> 
-        <div class="control-panel"> 
-            <div style="flex-grow:1"> 
-                <div style="font-size: 9px; color: var(--accent);">FLEET TELEMETRY</div> 
-                <select id="model-select"><option>Synchronizing...</option></select> 
-            </div> 
-            <button onclick="toggleDetails()" style="background:var(--yun-orange); color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer;">SPECS</button> 
-        </div> 
-    </div> 
-
-    <model-viewer id="main-viewer" camera-controls auto-rotate shadow-intensity="1" environment-image="neutral" ar ar-modes="webxr scene-viewer quick-look"></model-viewer> 
-
-<script> 
-    let modelData = []; 
-    const viewer = document.querySelector('#main-viewer'); 
-    const modelSelect = document.querySelector('#model-select'); 
-    const bootLogs = document.getElementById('boot-logs');
-    const entryBtn = document.getElementById('entry-btn');
-
-    // GitHub Tip: Use relative paths for GitHub Pages
-    const JSON_URL = 'models.json'; 
+<script>
+    // 1. Use a more robust pathing system for GitHub Pages subdirectories
+    const BASE_PATH = window.location.pathname.includes('github.io') ? './' : '';
+    const JSON_URL = `${BASE_PATH}models.json`; 
 
     async function initializeApp() { 
         try {
             const response = await fetch(JSON_URL);
-            if (!response.ok) throw new Error("JSON Fetch Failed");
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             modelData = await response.json();
             
-            // Populate Dropdown
             modelSelect.innerHTML = '';  
             modelData.forEach((m, index) => { 
                 const opt = document.createElement('option'); 
@@ -141,36 +30,36 @@
                 modelSelect.appendChild(opt); 
             }); 
             
-            updateAsset(0);
+            // Default load
+            if(modelData.length > 0) updateAsset(0);
+            
             bootLogs.innerText = "SYSTEMS ONLINE";
             entryBtn.style.display = "block";
         } catch (error) {
-            bootLogs.innerText = "CONNECTION ERROR: CHECK REPO";
+            console.error("Init Error:", error);
+            bootLogs.innerText = "OFFLINE: CHECK JSON/GITHUB PATHS";
             bootLogs.style.color = "#ff4444";
         }
     } 
 
     function updateAsset(index) { 
         const asset = modelData[index]; 
-        // GitHub Pages uses relative path: models/filename.glb
-        viewer.src = `models/${asset.file}.glb`; 
         
-        if (asset.usdz_file) { 
-            viewer.setAttribute('ios-src', `models/${asset.usdz_file}.usdz`); 
-        } 
+        // Ensure paths are relative to the root for GH Pages compliance
+        const glbPath = `models/${asset.file}.glb`;
+        const usdzPath = asset.usdz_file ? `models/${asset.usdz_file}.usdz` : '';
+
+        viewer.src = glbPath; 
+        
+        if (usdzPath) { 
+            viewer.setAttribute('ios-src', usdzPath); 
+        } else {
+            viewer.removeAttribute('ios-src'); // Prevents iOS from trying to load previous model's AR
+        }
          
         document.getElementById('asset-title').textContent = asset.name; 
-        document.getElementById('spec-base').textContent = asset.base; 
-        document.getElementById('spec-payload').textContent = asset.payload; 
-        document.getElementById('spec-desc').textContent = asset.description; 
+        document.getElementById('spec-base').textContent = asset.base || 'N/A'; 
+        document.getElementById('spec-payload').textContent = asset.payload || 'N/A'; 
+        document.getElementById('spec-desc').textContent = asset.description || 'No description available.'; 
     } 
-
-    function enterApp() { document.getElementById('start-screen').style.opacity = '0'; setTimeout(() => document.getElementById('start-screen').style.display='none', 800); }
-    function toggleDetails() { document.getElementById('details-panel').classList.toggle('active'); }
-    
-    modelSelect.addEventListener('change', (e) => updateAsset(e.target.value)); 
-    window.addEventListener('load', initializeApp);
-</script> 
-
-</body> 
-</html>
+</script>
