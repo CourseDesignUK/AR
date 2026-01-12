@@ -227,73 +227,38 @@
     </model-viewer>
 
 <script>
-    const modelData = [
-        {
-            "name": "TLD 121 Aircraft Loader",
-            "file": "TLD_121_Aircraft_loader",
-            "crew": "1 Specialist Operator",
-            "base": "Cargo Apron Zone A",
-            "length": "8.2 m",
-            "weight": "12,500 kg",
-            "payload": "7,000 kg Main Deck",
-            "weapons": "Certified Safe",
-            "description": "Critical logistics asset for loading containerized cargo onto YunExpress heavy-lift aircraft."
-        },
-        {
-            "name": "Airport Baggage Truck",
-            "file": "Airport_Baggage_Truck",
-            "crew": "1 Logistics Driver",
-            "base": "Sorting Center",
-            "length": "3.5 m",
-            "weight": "2,200 kg",
-            "payload": "Multiple Cargo Dollies",
-            "weapons": "Beacon Active",
-            "description": "Rapid transit vehicle used to move high-priority parcels from sorting to the runway."
-        },
-        {
-            "name": "Airport Catering Truck",
-            "file": "Airport_Catering_Truck",
-            "crew": "2 Ground Staff",
-            "base": "Service Point",
-            "length": "9.5 m",
-            "weight": "15,000 kg",
-            "payload": "High-Lift Galley Supply",
-            "weapons": "RFID Tracked",
-            "description": "Specialized high-lift truck providing essential cabin services for long-haul crews."
-        },
-        {
-            "name": "Ground Power Unit (GPU)",
-            "file": "GPU_Aiport_Ground_Power_Unit",
-            "crew": "Autonomous / Manual",
-            "base": "Stand 42-60",
-            "length": "4.2 m",
-            "weight": "2,800 kg",
-            "payload": "90 kVA Electric Feed",
-            "weapons": "Standard Compliance",
-            "description": "Powers onboard electronics and climate control while the main engines are powered down."
-        }
-    ];
+    let modelData = []; // To be filled from JSON
+    const viewer = document.querySelector('#main-viewer');
+    const modelSelect = document.querySelector('#model-select');
+    const logEl = document.getElementById('boot-logs');
 
-    const logs = ["Connecting...", "Syncing GSE Data...", "Mapping USDZ Telemetry...", "Active."];
-    let logIndex = 0;
+    // Async function to load the external JSON file
+    async function loadFleetData() {
+        logEl.innerText = "Requesting GSE Data...";
+        try {
+            const response = await fetch('models.json');
+            if (!response.ok) throw new Error("Failed to reach data server");
+            
+            modelData = await response.json();
+            logEl.innerText = "Syncing USDZ Telemetry...";
+            
+            setTimeout(() => {
+                initializeApp();
+                logEl.innerText = "Link Active.";
+            }, 600);
 
-    function updateLogs() {
-        if (logIndex < logs.length) {
-            document.getElementById('boot-logs').innerText = logs[logIndex];
-            logIndex++;
-            setTimeout(updateLogs, 600);
+        } catch (error) {
+            console.error("Data Load Error:", error);
+            logEl.innerText = "FATAL ERROR: OFFLINE";
+            logEl.style.color = "#ff4444";
         }
     }
-    updateLogs();
 
     function enterApp() {
         const startScreen = document.getElementById('start-screen');
         startScreen.style.opacity = '0';
         setTimeout(() => startScreen.style.visibility = 'hidden', 800);
     }
-
-    const viewer = document.querySelector('#main-viewer');
-    const modelSelect = document.querySelector('#model-select');
 
     function toggleDetails() {
         document.getElementById('details-panel').classList.toggle('active');
@@ -313,12 +278,11 @@
     function updateAsset(index) {
         const asset = modelData[index];
         
-        // Point to the models folder. 
-        // Note: Browsers need .glb for display, ios-src uses .usdz for AR mode.
+        // Dynamic Model Loading
         viewer.src = `models/${asset.file}.glb`;
         viewer.setAttribute('ios-src', `models/${asset.file}.usdz`);
         
-        // Update Metadata
+        // Metadata Injection
         document.getElementById('asset-title').textContent = asset.name;
         document.getElementById('spec-crew').textContent = asset.crew;
         document.getElementById('spec-base').textContent = asset.base;
@@ -331,8 +295,8 @@
 
     modelSelect.addEventListener('change', (e) => updateAsset(e.target.value));
     
-    // Start Application
-    initializeApp();
+    // Initialize Fetch on Load
+    loadFleetData();
 </script>
 
 </body>
