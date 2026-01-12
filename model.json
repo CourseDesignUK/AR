@@ -3,24 +3,24 @@
     "name": "TLD 121 Aircraft Loader",
     "file": "TLD_121_Aircraft_loader",
     "usdz_file": "TLD_121_Aircraft_loader",
-    "description": "A self-propelled, dual-platform elevator designed to transfer containers and pallets for various aircraft types."
+    "description": "A self-propelled, dual-platform elevator designed to transfer containers and pallets."
   },
   {
     "name": "Airport Baggage Truck",
     "file": "Airport_Baggage_Truck",
     "usdz_file": "Airport_Baggage_Truck",
-    "description": "Ground support vehicle used for the transportation of luggage between the terminal and the aircraft."
+    "description": "Ground support vehicle used for the transportation of luggage."
   },
   {
     "name": "Airport Catering Truck",
     "file": "Airport_Catering_Truck",
     "usdz_file": "Airport_Catering_Truck",
-    "description": "Specialized high-lift vehicle used to deliver galley supplies and meals to the aircraft cabin."
+    "description": "Specialized high-lift vehicle used to deliver galley supplies."
   },
   {
     "name": "Ground Power Unit (GPU)",
     "file": "GPU_Aiport_Ground_Power_Unit",
     "usdz_file": "GPU_Aiport_Ground_Power_Unit",
-    "description": "Mobile power source providing electrical energy to aircraft while they are parked on the ground."
+    "description": "Mobile power source providing electrical energy to aircraft."
   }
 ]
