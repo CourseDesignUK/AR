@@ -1,7 +1,7 @@
 [
   {
     "name": "TLD 121 Aircraft Loader",
-    "file": "TLD_121_Aircraft_loader",
+    "file": "tld_121_aircraft_loader",
     "usdz_file": "TLD_121_Aircraft_loader",
     "crew": "1 Operator",
     "base": "Cargo Terminal",
@@ -13,7 +13,7 @@
   },
   {
     "name": "Airport Baggage Truck",
-    "file": "Airport_Baggage_Truck",
+    "file": "airport_baggage_truck",
     "usdz_file": "Airport_Baggage_Truck",
     "crew": "1 Driver",
     "base": "Baggage Handling",
@@ -25,7 +25,7 @@
   },
   {
     "name": "Airport Catering Truck",
-    "file": "Airport_Catering_Truck",
+    "file": "airport_catering_truck",
     "usdz_file": "Airport_Catering_Truck",
     "crew": "2 Crew",
     "base": "Service Hub",
@@ -37,7 +37,7 @@
   },
   {
     "name": "Ground Power Unit (GPU)",
-    "file": "GPU_Aiport_Ground_Power_Unit",
+    "file": "gpu_aiport_ground_power_unit",
     "usdz_file": "GPU_Aiport_Ground_Power_Unit",
     "crew": "Remote/Manual",
     "base": "Apron Parking",
