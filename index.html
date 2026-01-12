@@ -84,7 +84,11 @@
         .commence-btn:hover { background: var(--yun-orange); box-shadow: 0 0 20px rgba(255, 106, 0, 0.4); }
 
         /* --- MAIN VIEWER & UI --- */
-        model-viewer { width: 100vw; height: 100vh; background-color: #0f141d; }
+        model-viewer {
+            width: 100vw; height: 100vh;
+            background-color: #0f141d;
+            --poster-color: transparent;
+        }
 
         .app-overlay {
             position: absolute; top: 20px; left: 50%;
@@ -209,23 +213,24 @@
     </div>
 
     <model-viewer id="main-viewer" 
+                  loading="eager" 
                   ar 
                   ar-modes="webxr scene-viewer quick-look" 
                   camera-controls 
                   auto-rotate 
                   shadow-intensity="1.5" 
                   environment-image="neutral" 
-                  exposure="1.2">
-        <button slot="ar-button" id="ar-button">Deploy to Workspace</button>
+                  exposure="1.2"
+                  camera-orbit="45deg 75deg 105%"
+                  interaction-prompt="none">
+        <button slot="ar-button" id="ar-button">Deploy USDZ to Workspace</button>
     </model-viewer>
 
 <script>
-    // Embedded Data to prevent "Hub Offline" errors
     const modelData = [
         {
             "name": "TLD 121 Aircraft Loader",
             "file": "TLD_121_Aircraft_loader",
-            "usdz_file": "TLD_121_Aircraft_loader",
             "crew": "1 Specialist Operator",
             "base": "Cargo Apron Zone A",
             "length": "8.2 m",
@@ -237,7 +242,6 @@
         {
             "name": "Airport Baggage Truck",
             "file": "Airport_Baggage_Truck",
-            "usdz_file": "Airport_Baggage_Truck",
             "crew": "1 Logistics Driver",
             "base": "Sorting Center",
             "length": "3.5 m",
@@ -249,7 +253,6 @@
         {
             "name": "Airport Catering Truck",
             "file": "Airport_Catering_Truck",
-            "usdz_file": "Airport_Catering_Truck",
             "crew": "2 Ground Staff",
             "base": "Service Point",
             "length": "9.5 m",
@@ -261,18 +264,17 @@
         {
             "name": "Ground Power Unit (GPU)",
             "file": "GPU_Aiport_Ground_Power_Unit",
-            "usdz_file": "GPU_Aiport_Ground_Power_Unit",
             "crew": "Autonomous / Manual",
             "base": "Stand 42-60",
             "length": "4.2 m",
             "weight": "2,800 kg",
             "payload": "90 kVA Electric Feed",
             "weapons": "Standard Compliance",
-            "description": "Powers onboard electronics and climate control while the main engines are powered down for loading."
+            "description": "Powers onboard electronics and climate control while the main engines are powered down."
         }
     ];
 
-    const logs = ["Connecting...", "Syncing GSE Data...", "Verifying USDZ Links...", "Active."];
+    const logs = ["Connecting...", "Syncing GSE Data...", "Mapping USDZ Telemetry...", "Active."];
     let logIndex = 0;
 
     function updateLogs() {
@@ -310,13 +312,13 @@
 
     function updateAsset(index) {
         const asset = modelData[index];
-        // Note: Make sure .glb files exist with these names or update extension to .usdz if only using iOS
+        
+        // Point to the models folder. 
+        // Note: Browsers need .glb for display, ios-src uses .usdz for AR mode.
         viewer.src = `models/${asset.file}.glb`;
+        viewer.setAttribute('ios-src', `models/${asset.file}.usdz`);
         
-        if (asset.usdz_file) {
-            viewer.setAttribute('ios-src', `models/${asset.usdz_file}.usdz`);
-        }
-        
+        // Update Metadata
         document.getElementById('asset-title').textContent = asset.name;
         document.getElementById('spec-crew').textContent = asset.crew;
         document.getElementById('spec-base').textContent = asset.base;
@@ -329,7 +331,7 @@
 
     modelSelect.addEventListener('change', (e) => updateAsset(e.target.value));
     
-    // Start Init
+    // Start Application
     initializeApp();
 </script>
 
