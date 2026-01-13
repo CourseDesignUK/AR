@@ -94,7 +94,7 @@
             position: absolute; top: 20px; left: 50%;
             transform: translateX(-50%); z-index: 100;
             width: 90%; max-width: 500px;
-            pointer-events: none; /* Allow clicks to pass through to model-viewer except on children */
+            pointer-events: none;
         }
         
         .control-panel {
@@ -108,7 +108,7 @@
             justify-content: space-between; 
             align-items: center;
             gap: 15px;
-            pointer-events: auto; /* Re-enable for controls */
+            pointer-events: auto;
         }
 
         .panel-info { display: flex; flex-direction: column; flex-grow: 1; overflow: hidden; }
@@ -156,9 +156,8 @@
             padding: 16px 32px; border-radius: 8px; font-weight: 800;
             cursor: pointer; z-index: 10; text-transform: uppercase; font-size: 12px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            display: none; /* Hidden by default, shown by model-viewer if AR supported */
+            /* Visibility is handled by model-viewer based on AR support */
         }
-        model-viewer[ar-status="active"] #ar-button { display: none; } /* Hide button when in AR */
     </style>
 </head>
 <body>
@@ -229,7 +228,6 @@
     async function loadFleetData() {
         logEl.innerText = "Requesting GSE Data...";
         try {
-            // Ensure models.json is in the same directory
             const response = await fetch('models.json');
             if (!response.ok) throw new Error("Failed to reach data server");
             
@@ -272,12 +270,10 @@
     function updateAsset(index) {
         const asset = modelData[index];
         
-        // Dynamic Model Loading
-        // 1. Update standard GLB
-        viewer.src = `models/${asset.file}.glb`;
-        
-        // 2. Update iOS USDZ (Critical fix: use .iosSrc property for immediate sync)
-        viewer.iosSrc = `models/${asset.file}.usdz`;
+        // Use setAttribute to ensure iOS Safari detects the change correctly
+        // iOS requires 'ios-src' for Quick Look AR mode
+        viewer.setAttribute('src', `models/${asset.file}.glb`);
+        viewer.setAttribute('ios-src', `models/${asset.file}.usdz`);
         
         // Metadata Injection
         document.getElementById('asset-title').textContent = asset.name;
