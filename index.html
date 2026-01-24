@@ -2,86 +2,99 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>3D F1 Car Tech Explorer</title>
-    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>F1 3D Technical Lab</title>
     
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+
     <style>
-        body { margin: 0; background-color: #0b0b0b; color: white; font-family: 'Orbitron', sans-serif; }
+        :root { --f1-red: #e10600; }
+        body { margin: 0; background: radial-gradient(circle, #222 0%, #000 100%); color: white; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; overflow: hidden; }
         
-        /* The 3D Viewport */
+        /* Viewer height adjusted for Safari mobile/desktop */
         model-viewer {
-            width: 100%;
-            height: 90vh;
+            width: 100vw;
+            height: 100vh;
             --poster-color: transparent;
         }
 
-        /* Hotspot Styling */
+        /* Hotspots */
         .hotspot {
-            background: #e10600;
+            background: var(--f1-red);
             border-radius: 50%;
-            border: 2px solid #fff;
-            width: 20px;
-            height: 20px;
+            border: 2px solid white;
+            width: 18px;
+            height: 18px;
+            padding: 0;
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: transform 0.3s;
         }
 
-        .hotspot:hover { transform: scale(1.4); background: #fff; }
+        .hotspot:not([data-visible]) { opacity: 0.3; pointer-events: none; }
 
-        /* The Info Label */
         .annotation {
-            background: rgba(255, 255, 255, 0.9);
+            background: #fff;
             color: #000;
-            padding: 8px 12px;
             border-radius: 4px;
-            font-size: 14px;
+            padding: 5px 10px;
+            font-size: 12px;
             font-weight: bold;
-            display: none; /* Hidden by default */
             position: absolute;
-            bottom: 30px;
+            top: 30px;
             left: 50%;
             transform: translateX(-50%);
-            white-space: nowrap;
+            display: none;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
         }
 
         .hotspot:hover .annotation { display: block; }
+        .hotspot:hover { transform: scale(1.5); background: white; }
 
-        .ui-panel {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            text-align: center;
-            background: rgba(0,0,0,0.7);
-            padding: 10px 30px;
-            border-radius: 50px;
+        .header-ui {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            pointer-events: none;
         }
+
+        .header-ui h1 { margin: 0; font-size: 1.5rem; letter-spacing: 2px; }
+        .header-ui p { color: var(--f1-red); font-weight: bold; margin: 5px 0; }
     </style>
 </head>
 <body>
+
+    <div class="header-ui">
+        <h1>F1 CHASSIS INSPECTOR</h1>
+        <p>3D RENDER: F1.GLB</p>
+    </div>
 
     <model-viewer 
         src="F1.GLB" 
         camera-controls 
         auto-rotate 
-        shadow-intensity="2" 
-        exposure="1"
-        environment-image="neutral">
-        
-        <button class="hotspot" slot="hotspot-front" data-position="0m 0.3m 2m" data-normal="0m 1m 0m">
-            <div class="annotation">Front Wing: Downforce Generation</div>
+        shadow-intensity="1" 
+        exposure="1.2"
+        environment-image="neutral"
+        ar-modes="webxr scene-viewer quick-look"
+        camera-orbit="45deg 75deg 5m">
+
+        <button class="hotspot" slot="hotspot-1" data-position="0 0.2 2" data-normal="0 1 0">
+            <div class="annotation">FRONT WING: AERO BALANCE</div>
         </button>
 
-        <button class="hotspot" slot="hotspot-rear" data-position="0m 1m -2m" data-normal="0m 1m 0m">
-            <div class="annotation">DRS System: Top Speed Boost</div>
+        <button class="hotspot" slot="hotspot-2" data-position="0 1 -2" data-normal="0 1 0">
+            <div class="annotation">DRS FLAP: DRAG REDUCTION</div>
         </button>
 
     </model-viewer>
 
-    <div class="ui-panel">
-        <h1>2026 SPEC PROTOTYPE</h1>
-        <p>Interact with the model to explore components</p>
-    </div>
-
+    <script>
+        // Log to console to help debugging in Safari
+        const modelViewer = document.querySelector('model-viewer');
+        modelViewer.addEventListener('error', (event) => {
+            console.error("Error loading 3D model:", event.detail.type);
+            alert("Model failed to load. Ensure F1.GLB is in the same folder.");
+        });
+    </script>
 </body>
 </html>
