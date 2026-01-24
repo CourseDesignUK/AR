@@ -3,141 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>F1 Tech & Specs Explorer</title>
+    <title>3D F1 Technical Lab</title>
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+    
     <style>
-        :root {
-            --f1-red: #e10600;
-            --dark-grey: #15151e;
-            --carbon: #2b2b2b;
-        }
-
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: var(--dark-grey);
-            color: white;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .app-wrapper {
-            display: grid;
-            grid-template-columns: 1fr 300px;
-            gap: 20px;
-            max-width: 1200px;
+        :root { --f1-red: #e10600; }
+        body { margin: 0; background: #050505; color: white; font-family: sans-serif; }
+        
+        /* The 3D Canvas */
+        model-viewer {
             width: 100%;
+            height: 80vh;
+            background-color: #111;
         }
 
-        .container {
-            position: relative;
-            background: #000;
-            border-radius: 12px;
-            border: 1px solid #444;
-            overflow: hidden;
-        }
-
-        .car-image {
-            width: 100%;
-            display: block;
-            opacity: 0.7;
-        }
-
-        /* Hotspots */
-        .hotspot {
-            position: absolute;
-            width: 18px;
-            height: 18px;
-            background-color: var(--f1-red);
-            border: 2px solid white;
-            border-radius: 50%;
+        /* Hotspot Buttons on the 3D Model */
+        .Hotspot {
+            background: var(--f1-red);
+            border-radius: 32px;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.25);
+            height: 24px;
+            width: 24px;
             cursor: pointer;
-            z-index: 10;
         }
 
-        /* Side Panel Specs */
-        .spec-panel {
-            background: var(--carbon);
-            padding: 20px;
-            border-radius: 12px;
-            border-top: 4px solid var(--f1-red);
+        .HotspotAnnotation {
+            background: #fff;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.25);
+            color: rgba(0, 0, 0, 0.8);
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            left: calc(100% + 1em);
+            max-width: 128px;
+            padding: 0.5em 1em;
+            position: absolute;
+            top: 50%;
+            width: max-content;
         }
 
-        .spec-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }
-
-        .spec-table td {
-            padding: 10px 0;
-            border-bottom: 1px solid #444;
-            font-size: 0.9rem;
-        }
-
-        .spec-label { color: #aaa; }
-        .spec-value { text-align: right; font-weight: bold; color: var(--f1-red); }
-
-        #info-box {
-            grid-column: span 2;
-            background: #1f1f1f;
-            padding: 20px;
-            border-radius: 8px;
-            margin-top: 10px;
-        }
-
-        @media (max-width: 900px) {
-            .app-wrapper { grid-template-columns: 1fr; }
-            #info-box { grid-column: span 1; }
-        }
+        .panel { padding: 20px; text-align: center; }
+        .stats { color: var(--f1-red); font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <h1>F1 Constructor Intelligence</h1>
+    <model-viewer 
+        src="YOUR_CAR_MODEL.glb" 
+        ar 
+        camera-controls 
+        shadow-intensity="1" 
+        auto-rotate 
+        alt="A 3D model of an F1 Car">
+        
+        <button class="Hotspot" slot="hotspot-1" data-position="0.5m 0.5m 1.5m" data-normal="0m 1m 0m">
+            <div class="HotspotAnnotation">Front Wing</div>
+        </button>
 
-    <div class="app-wrapper">
-        <div class="container">
-            <img src="https://images.unsplash.com/photo-1534353473418-4cfa6c56fd38?auto=format&fit=crop&q=80&w=1000" alt="F1 Car" class="car-image">
-            
-            <div class="hotspot" style="top: 78%; left: 12%;" onclick="updateInfo('Front Wing', 'Directs air over wheels.', 'Carbon Fiber', 'Approx. 2m wide')"></div>
-            <div class="hotspot" style="top: 65%; left: 45%;" onclick="updateInfo('Power Unit', '1.6L V6 Turbo Hybrid', '950+ HP', '15,000 RPM')"></div>
-            <div class="hotspot" style="top: 25%; left: 75%;" onclick="updateInfo('Rear Wing', 'Generates downforce for grip.', 'Active DRS', 'Dual Element')"></div>
-        </div>
+        <button class="Hotspot" slot="hotspot-2" data-position="0m 0.8m -1.5m" data-normal="0m 1m 0m">
+            <div class="HotspotAnnotation">Rear Wing / DRS</div>
+        </button>
+    </model-viewer>
 
-        <div class="spec-panel">
-            <h3>Vehicle Specs</h3>
-            <table class="spec-table">
-                <tr><td class="spec-label">Min Weight</td><td class="spec-value">798kg</td></tr>
-                <tr><td class="spec-label">Engine</td><td class="spec-value">1.6L V6</td></tr>
-                <tr><td class="spec-label">Top Speed</td><td class="spec-value">~360 km/h</td></tr>
-                <tr><td class="spec-label">0-100 km/h</td><td class="spec-value">2.6s</td></tr>
-            </table>
-            
-            <h3 style="margin-top:25px;">Component Focus</h3>
-            <div id="component-detail">
-                <p style="font-size: 0.8rem; color: #888;">Select a part on the car to see detailed engineering specs.</p>
-            </div>
-        </div>
-
-        <div id="info-box">
-            <h2 id="part-title">Systems Check</h2>
-            <p id="part-desc">Hover or click on technical hotspots to analyze car components.</p>
-        </div>
+    <div class="panel">
+        <h1>VF-26 Prototype</h1>
+        <p>Rotate the model to inspect aerodynamics. <span class="stats">798kg | 1.6L V6 Turbo</span></p>
     </div>
 
-    <script>
-        function updateInfo(name, desc, mat, extra) {
-            document.getElementById('part-title').innerText = name;
-            document.getElementById('part-desc').innerText = desc;
-            
-            document.getElementById('component-detail').innerHTML = `
-                <table class="spec-table">
-                    <tr><td class="spec-label">Material</td><td class="spec-value">${mat}</td></tr>
-                    <tr><td class="spec-label">Prop</td><td class="spec-value">${extra}</td></tr>
-                </table>
-            `;
-        }
-    </script>
 </body>
 </html>
