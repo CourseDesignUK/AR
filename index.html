@@ -2,74 +2,85 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D F1 Technical Lab</title>
+    <title>3D F1 Car Tech Explorer</title>
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
     
     <style>
-        :root { --f1-red: #e10600; }
-        body { margin: 0; background: #050505; color: white; font-family: sans-serif; }
+        body { margin: 0; background-color: #0b0b0b; color: white; font-family: 'Orbitron', sans-serif; }
         
-        /* The 3D Canvas */
+        /* The 3D Viewport */
         model-viewer {
             width: 100%;
-            height: 80vh;
-            background-color: #111;
+            height: 90vh;
+            --poster-color: transparent;
         }
 
-        /* Hotspot Buttons on the 3D Model */
-        .Hotspot {
-            background: var(--f1-red);
-            border-radius: 32px;
+        /* Hotspot Styling */
+        .hotspot {
+            background: #e10600;
+            border-radius: 50%;
             border: 2px solid #fff;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.25);
-            height: 24px;
-            width: 24px;
+            width: 20px;
+            height: 20px;
             cursor: pointer;
+            transition: transform 0.2s;
         }
 
-        .HotspotAnnotation {
-            background: #fff;
+        .hotspot:hover { transform: scale(1.4); background: #fff; }
+
+        /* The Info Label */
+        .annotation {
+            background: rgba(255, 255, 255, 0.9);
+            color: #000;
+            padding: 8px 12px;
             border-radius: 4px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.25);
-            color: rgba(0, 0, 0, 0.8);
-            display: block;
-            font-size: 12px;
-            font-weight: 700;
-            left: calc(100% + 1em);
-            max-width: 128px;
-            padding: 0.5em 1em;
+            font-size: 14px;
+            font-weight: bold;
+            display: none; /* Hidden by default */
             position: absolute;
-            top: 50%;
-            width: max-content;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
         }
 
-        .panel { padding: 20px; text-align: center; }
-        .stats { color: var(--f1-red); font-weight: bold; }
+        .hotspot:hover .annotation { display: block; }
+
+        .ui-panel {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            background: rgba(0,0,0,0.7);
+            padding: 10px 30px;
+            border-radius: 50px;
+        }
     </style>
 </head>
 <body>
 
     <model-viewer 
-        src="YOUR_CAR_MODEL.glb" 
-        ar 
+        src="F1.GLB" 
         camera-controls 
-        shadow-intensity="1" 
         auto-rotate 
-        alt="A 3D model of an F1 Car">
+        shadow-intensity="2" 
+        exposure="1"
+        environment-image="neutral">
         
-        <button class="Hotspot" slot="hotspot-1" data-position="0.5m 0.5m 1.5m" data-normal="0m 1m 0m">
-            <div class="HotspotAnnotation">Front Wing</div>
+        <button class="hotspot" slot="hotspot-front" data-position="0m 0.3m 2m" data-normal="0m 1m 0m">
+            <div class="annotation">Front Wing: Downforce Generation</div>
         </button>
 
-        <button class="Hotspot" slot="hotspot-2" data-position="0m 0.8m -1.5m" data-normal="0m 1m 0m">
-            <div class="HotspotAnnotation">Rear Wing / DRS</div>
+        <button class="hotspot" slot="hotspot-rear" data-position="0m 1m -2m" data-normal="0m 1m 0m">
+            <div class="annotation">DRS System: Top Speed Boost</div>
         </button>
+
     </model-viewer>
 
-    <div class="panel">
-        <h1>VF-26 Prototype</h1>
-        <p>Rotate the model to inspect aerodynamics. <span class="stats">798kg | 1.6L V6 Turbo</span></p>
+    <div class="ui-panel">
+        <h1>2026 SPEC PROTOTYPE</h1>
+        <p>Interact with the model to explore components</p>
     </div>
 
 </body>
