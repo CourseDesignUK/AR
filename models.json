@@ -1,57 +1,46 @@
 [
   {
     "name": "TLD 121 Aircraft Loader",
-    "file": "TLD_121_Aircraft_loader",
-    "crew": "YunExpress Ground Crew",
-    "base": "HKG - Terminal A",
+    "file": "tld_121_aircraft_loader",
+    "crew": "YunExpress Heavy Lift Team",
+    "base": "HKG - Cargo Apron",
     "length": "8.2m",
     "weight": "12,500 kg",
-    "payload": "7,000 kg / 15,400 lbs",
+    "payload": "7,000 kg Main Deck",
     "weapons": "Nominal / Operational",
-    "description": "High-capacity dual-platform container loader. Optimized for rapid loading of palletized cargo into wide-body aircraft main decks."
+    "description": "High-capacity dual-platform container loader used for rapid loading of palletized cargo into wide-body freighter aircraft."
   },
   {
-    "name": "Schopf F396 Pushback Tug",
-    "file": "tug_f396",
-    "crew": "Pushback Team 04",
-    "base": "HKG - Apron 2",
-    "length": "9.4m",
-    "weight": "50,000 kg",
-    "payload": "Max Tow: 600 Tons",
+    "name": "Airport Baggage Truck",
+    "file": "airport_baggage_truck",
+    "crew": "Parcel Handling Group",
+    "base": "SZX - Logistics Hub",
+    "length": "4.5m",
+    "weight": "3,800 kg",
+    "payload": "2,500 kg Tow Capacity",
     "weapons": "Nominal",
-    "description": "Heavy-duty aircraft tractor designed for moving fully loaded freighter aircraft like the Boeing 747-8F and An-124."
+    "description": "Essential ground asset for the rapid transit of ULDs and loose baggage carts between the sorting facility and aircraft side."
   },
   {
-    "name": "Electric Belt Loader",
-    "file": "belt_ldr_09",
-    "crew": "Sorting Team C",
-    "base": "SZX - Cargo Hub",
-    "length": "5.1m",
-    "weight": "3,200 kg",
-    "payload": "80 kg per meter",
+    "name": "Airport Catering Truck",
+    "file": "airport_catering_truck",
+    "crew": "Service Ops Division",
+    "base": "PVG - Terminal 2",
+    "length": "7.5m",
+    "weight": "8,200 kg",
+    "payload": "Scissor-Lift: 4,000 kg",
     "weapons": "Nominal",
-    "description": "Zero-emission electric belt loader for loose parcel loading into narrow-body aircraft and lower-lobe holds."
+    "description": "High-lift service vehicle designed to reach aircraft galley doors for replenishing crew supplies and onboard amenities."
   },
   {
-    "name": "High-Lift Catering Truck",
-    "file": "catering_01",
-    "crew": "Service Ops",
-    "base": "PVG - Terminal 1",
-    "length": "7.8m",
-    "weight": "8,500 kg",
-    "payload": "4,500 kg Lift",
-    "weapons": "Nominal",
-    "description": "Scissor-lift platform truck for supplying in-flight amenities and crew supplies to main cabin doors."
-  },
-  {
-    "name": "Global Refueller",
-    "file": "fuel_tanker_v2",
-    "crew": "Fueling Division",
-    "base": "Global Support",
-    "length": "12.0m",
-    "weight": "15,000 kg (Empty)",
-    "payload": "35,000 Liters JET-A1",
-    "weapons": "HAZMAT Protocol Active",
-    "description": "High-flow fueling unit equipped with dual underwing hoses and electronic metering systems."
+    "name": "Ground Power Unit (GPU)",
+    "file": "gpu_aiport_ground_power_unit",
+    "crew": "Technical Support",
+    "base": "Global Support Network",
+    "length": "3.2m",
+    "weight": "2,100 kg",
+    "payload": "Output: 90kVA / 115V AC",
+    "weapons": "Voltage Stabilized",
+    "description": "Provides external electrical power to aircraft while on the ground, allowing systems to remain active without the APU running."
   }
 ]
