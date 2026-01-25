@@ -90,6 +90,35 @@
             --poster-color: transparent;
         }
 
+        /* --- HOTSPOT STYLES --- */
+        .Hotspot {
+            background: var(--yun-orange);
+            border-radius: 50%;
+            width: 14px; height: 14px;
+            border: 2px solid white;
+            box-shadow: 0 0 15px rgba(255, 106, 0, 0.5);
+            cursor: pointer;
+            padding: 0;
+            transition: transform 0.3s ease;
+        }
+        .Hotspot:hover { transform: scale(1.4); }
+
+        .HotspotAnnotation {
+            background: #161b22;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 800;
+            position: absolute;
+            transform: translate(24px, -50%);
+            white-space: nowrap;
+            border: 1px solid var(--glass-border);
+            pointer-events: none;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
         .app-overlay {
             position: absolute; top: 20px; left: 50%;
             transform: translateX(-50%); z-index: 100;
@@ -227,12 +256,11 @@
     </model-viewer>
 
 <script>
-    let modelData = []; // To be filled from JSON
+    let modelData = []; 
     const viewer = document.querySelector('#main-viewer');
     const modelSelect = document.querySelector('#model-select');
     const logEl = document.getElementById('boot-logs');
 
-    // Async function to load the external JSON file
     async function loadFleetData() {
         logEl.innerText = "Requesting GSE Data...";
         try {
@@ -281,6 +309,38 @@
         // Dynamic Model Loading
         viewer.src = `models/${asset.file}.glb`;
         viewer.setAttribute('ios-src', `models/${asset.file}.usdz`);
+
+        // Clear existing hotspots
+        const oldHotspots = viewer.querySelectorAll('.Hotspot');
+        oldHotspots.forEach(h => h.remove());
+
+        // Inject Hotspots for Asset 212 (TLD 121)
+        if (asset.file === "212") {
+            // Apply specific 212 settings
+            viewer.shadowIntensity = "1.92";
+            viewer.exposure = "1.3";
+            
+            const hsData = [
+                { slot: "hotspot-3", pos: "0.2362381035975284m 0.7729457203695578m -0.42072196802252265m", norm: "0m 0.9841435250337448m -0.17737396126307556m", label: "Controls" },
+                { slot: "hotspot-5", pos: "-0.12999999523162842m 0.07536548463547889m -0.6354494573303584m", norm: "-1m 0m 0m", label: "Engine" },
+                { slot: "hotspot-6", pos: "0.010803168823961904m 0.679622714407742m 0.44216440233477483m", norm: "0m 1m 0m", label: "Main Deck" }
+            ];
+
+            hsData.forEach(hs => {
+                const btn = document.createElement('button');
+                btn.classList.add('Hotspot');
+                btn.slot = hs.slot;
+                btn.setAttribute('data-position', hs.pos);
+                btn.setAttribute('data-normal', hs.norm);
+                btn.setAttribute('data-visibility-attribute', 'visible');
+                btn.innerHTML = `<div class="HotspotAnnotation">${hs.label}</div>`;
+                viewer.appendChild(btn);
+            });
+        } else {
+            // Reset to default lighting for other models
+            viewer.shadowIntensity = "1.5";
+            viewer.exposure = "1.2";
+        }
         
         // Metadata Injection
         document.getElementById('asset-title').textContent = asset.name;
