@@ -11,8 +11,8 @@
         :root {
             --app-bg: #0b0e14;
             --yun-orange: #ff6a00; 
-            --glass: rgba(255, 255, 255, 0.03);
-            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.12);
             --accent: #ff9d5c;
         }
 
@@ -45,8 +45,9 @@
             background: transparent; color: white; border: 1px solid var(--yun-orange); 
             padding: 12px 30px; border-radius: 4px; cursor: pointer; 
             font-weight: bold; letter-spacing: 2px; text-transform: uppercase;
+            transition: 0.3s ease;
         }
-        .commence-btn:hover { background: var(--yun-orange); }
+        .commence-btn:hover { background: var(--yun-orange); box-shadow: 0 0 20px rgba(255, 106, 0, 0.4); }
 
         /* --- 3D VIEWER --- */
         model-viewer { 
@@ -55,14 +56,15 @@
 
         /* --- HOTSPOTS --- */
         .Hotspot { 
-            background: var(--yun-orange); border-radius: 50%; width: 12px; 
-            height: 12px; border: 2px solid white; cursor: pointer; 
+            background: var(--yun-orange); border-radius: 50%; width: 14px; 
+            height: 14px; border: 2px solid white; cursor: pointer; 
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
         }
         .HotspotAnnotation { 
-            background: #161b22; color: white; padding: 6px 10px; 
-            border-radius: 4px; font-size: 10px; position: absolute; 
+            background: rgba(22, 27, 34, 0.9); color: white; padding: 6px 12px; 
+            border-radius: 4px; font-size: 11px; position: absolute; 
             transform: translate(20px, -50%); border: 1px solid var(--glass-border); 
-            white-space: nowrap; font-weight: bold;
+            white-space: nowrap; font-weight: bold; backdrop-filter: blur(5px);
         }
 
         /* --- UI OVERLAYS --- */
@@ -71,28 +73,34 @@
             width: 90%; max-width: 500px; z-index: 100; 
         }
         .control-panel { 
-            background: var(--glass); backdrop-filter: blur(15px); 
-            border: 1px solid var(--glass-border); padding: 10px 20px; 
+            background: var(--glass); backdrop-filter: blur(20px); 
+            border: 1px solid var(--glass-border); padding: 12px 24px; 
             border-radius: 12px; display: flex; justify-content: space-between; align-items: center; 
         }
-        .panel-label { font-size: 9px; color: var(--accent); text-transform: uppercase; font-weight: bold; }
-        select { background: transparent; color: white; border: none; font-weight: bold; outline: none; font-size: 14px; cursor: pointer; }
+        .panel-label { font-size: 10px; color: var(--accent); text-transform: uppercase; font-weight: bold; letter-spacing: 1px; }
+        
+        select { 
+            background: transparent; color: white; border: none; 
+            font-weight: bold; outline: none; font-size: 15px; cursor: pointer; 
+            appearance: none; -webkit-appearance: none;
+        }
         
         /* --- SIDE PANEL --- */
         .details-panel { 
             position: absolute; top: 0; right: -100%; width: 100%; 
-            max-width: 380px; height: 100%; background: rgba(11, 14, 20, 0.98); 
-            backdrop-filter: blur(25px); transition: right 0.5s cubic-bezier(0.16, 1, 0.3, 1); 
+            max-width: 400px; height: 100%; background: rgba(11, 14, 20, 0.85); 
+            backdrop-filter: blur(30px); transition: right 0.6s cubic-bezier(0.16, 1, 0.3, 1); 
             color: white; border-left: 1px solid var(--glass-border); overflow-y: auto; z-index: 200; 
         }
         .details-panel.active { right: 0; }
-        .spec-item { margin-bottom: 20px; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px; }
-        .spec-value { display: block; font-size: 14px; margin-top: 5px; color: #f1f5f9; }
+        .spec-item { margin-bottom: 25px; border-bottom: 1px solid var(--glass-border); padding-bottom: 12px; }
+        .spec-value { display: block; font-size: 15px; margin-top: 5px; color: #ffffff; font-weight: 500; }
 
         #ar-button {
             position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
-            background: white; color: black; border: none; padding: 12px 24px;
+            background: white; color: black; border: none; padding: 14px 28px;
             border-radius: 30px; font-weight: 800; cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
         }
     </style>
 </head>
@@ -108,14 +116,14 @@
 </div>
 
 <div id="details-panel" class="details-panel">
-    <div style="padding: 50px 30px;">
+    <div style="padding: 60px 40px;">
         <div class="panel-label" style="color:var(--yun-orange); margin-bottom:10px;">Classification: GSE Support</div>
-        <h2 id="asset-title" style="font-weight: 300; text-transform: uppercase; margin-bottom:30px; font-size:24px;">-</h2>
+        <h2 id="asset-title" style="font-weight: 300; text-transform: uppercase; margin-bottom:40px; font-size:28px; letter-spacing:1px;">-</h2>
         <div class="spec-item"><span class="panel-label">Operated By</span><span id="spec-crew" class="spec-value">-</span></div>
         <div class="spec-item"><span class="panel-label">Primary Zone</span><span id="spec-base" class="spec-value">-</span></div>
         <div class="spec-item"><span class="panel-label">Unit Metrics</span><span id="spec-dim" class="spec-value">-</span></div>
-        <div class="spec-item"><span class="panel-label">Operational Profile</span><span id="spec-desc" class="spec-value" style="opacity:0.7; font-size:13px; line-height:1.5;">-</span></div>
-        <button onclick="document.getElementById('details-panel').classList.remove('active')" style="width:100%; background:var(--yun-orange); color:white; border:none; padding:15px; border-radius:8px; font-weight:bold; cursor:pointer; margin-top:20px; text-transform:uppercase;">Return to Tracker</button>
+        <div class="spec-item"><span class="panel-label">Operational Profile</span><span id="spec-desc" class="spec-value" style="opacity:0.8; font-size:14px; line-height:1.6; font-weight:300;">-</span></div>
+        <button onclick="document.getElementById('details-panel').classList.remove('active')" style="width:100%; background:var(--yun-orange); color:white; border:none; padding:18px; border-radius:8px; font-weight:bold; cursor:pointer; margin-top:30px; text-transform:uppercase; letter-spacing:1px;">Return to Tracker</button>
     </div>
 </div>
 
@@ -125,7 +133,7 @@
             <div class="panel-label">Active Feed</div>
             <select id="model-select"><option>Synchronizing...</option></select>
         </div>
-        <button onclick="document.getElementById('details-panel').classList.add('active')" style="background:var(--yun-orange); color:white; border:none; padding:10px 20px; border-radius:6px; font-weight:bold; cursor:pointer; font-size:11px;">SPECS</button>
+        <button onclick="document.getElementById('details-panel').classList.add('active')" style="background:var(--yun-orange); color:white; border:none; padding:12px 24px; border-radius:6px; font-weight:bold; cursor:pointer; font-size:12px; letter-spacing:1px;">SPECS</button>
     </div>
 </div>
 
@@ -134,13 +142,13 @@
     ar-modes="webxr scene-viewer quick-look" 
     camera-controls 
     auto-rotate 
-    shadow-intensity="2" 
-    shadow-softness="1"
-    environment-image="neutral" 
+    shadow-intensity="1" 
+    shadow-softness="0.5"
+    environment-image="legacy" 
     tone-mapping="commerce"
-    exposure="0.75" 
+    exposure="1.3" 
     interaction-prompt="none">
-    <button slot="ar-button" id="ar-button">DEPLOY USDZ TO SPACE</button>
+    <button slot="ar-button" id="ar-button">VIEW IN AUGMENTED REALITY</button>
 </model-viewer>
 
 <script>
@@ -152,7 +160,7 @@
         try {
             const res = await fetch('models.json');
             fleetData = await res.json();
-            select.innerHTML = fleetData.map((m, i) => `<option value="${i}">${m.name}</option>`).join('');
+            select.innerHTML = fleetData.map((m, i) => `<option value="${i}">${m.name.toUpperCase()}</option>`).join('');
             updateAsset(0);
         } catch (e) { 
             console.error("Link Failure", e); 
@@ -168,13 +176,13 @@
         // Remove existing hotspots
         viewer.querySelectorAll('.Hotspot').forEach(h => h.remove());
 
-        // Lighting & Hotspot Override for TLD 121
+        // Adaptive Lighting Logic
         if (asset.file === "tld_121_aircraft_loader") {
-            viewer.exposure = "0.85"; // Slightly higher for complex textures
+            viewer.exposure = "1.6"; // High boost for detailed dark machinery
             const hs = [
-                { slot: "h1", pos: "0.236m 0.772m -0.420m", label: "Controls" },
-                { slot: "h2", pos: "-0.130m 0.075m -0.635m", label: "Engine" },
-                { slot: "h3", pos: "0.010m 0.679m 0.442m", label: "Main Deck" }
+                { slot: "h1", pos: "0.236m 0.772m -0.420m", label: "Operator Console" },
+                { slot: "h2", pos: "-0.130m 0.075m -0.635m", label: "Hybrid Drive Unit" },
+                { slot: "h3", pos: "0.010m 0.679m 0.442m", label: "Main Deck Platform" }
             ];
             hs.forEach(h => {
                 const b = document.createElement('button');
@@ -184,7 +192,7 @@
                 viewer.appendChild(b);
             });
         } else {
-            viewer.exposure = "0.75"; // Darker for standard models
+            viewer.exposure = "1.3"; // Clean daylight for standard assets
         }
 
         // Meta Injection
