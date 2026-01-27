@@ -1,46 +1,50 @@
-[
-  {
-    "name": "TLD 121 Aircraft Loader",
-    "file": "tld_121_aircraft_loader",
-    "crew": "YunExpress Heavy Lift Team",
-    "base": "HKG - Cargo Apron",
-    "length": "8.2m",
-    "weight": "12,500 kg",
-    "payload": "7,000 kg Main Deck",
-    "weapons": "Nominal / Operational",
-    "description": "High-capacity dual-platform container loader used for rapid loading of palletized cargo into wide-body freighter aircraft."
-  },
-  {
-    "name": "Airport Baggage Truck",
-    "file": "airport_baggage_truck",
-    "crew": "Parcel Handling Group",
-    "base": "SZX - Logistics Hub",
-    "length": "4.5m",
-    "weight": "3,800 kg",
-    "payload": "2,500 kg Tow Capacity",
-    "weapons": "Nominal",
-    "description": "Essential ground asset for the rapid transit of ULDs and loose baggage carts between the sorting facility and aircraft side."
-  },
-  {
-    "name": "Airport Catering Truck",
-    "file": "airport_catering_truck",
-    "crew": "Service Ops Division",
-    "base": "PVG - Terminal 2",
-    "length": "7.5m",
-    "weight": "8,200 kg",
-    "payload": "Scissor-Lift: 4,000 kg",
-    "weapons": "Nominal",
-    "description": "High-lift service vehicle designed to reach aircraft galley doors for replenishing crew supplies and onboard amenities."
-  },
-  {
-    "name": "Ground Power Unit (GPU)",
-    "file": "gpu_aiport_ground_power_unit",
-    "crew": "Technical Support",
-    "base": "Global Support Network",
-    "length": "3.2m",
-    "weight": "2,100 kg",
-    "payload": "Output: 90kVA / 115V AC",
-    "weapons": "Voltage Stabilized",
-    "description": "Provides external electrical power to aircraft while on the ground, allowing systems to remain active without the APU running."
-  }
-]
+function updateAsset(idx) {
+        const asset = fleetData[idx];
+        viewer.src = `models/${asset.file}.glb`;
+        viewer.setAttribute('ios-src', `models/${asset.file}.usdz`);
+        
+        viewer.cameraOrbit = "45deg 75deg 100%";
+        viewer.fieldOfView = "auto";
+
+        // Exposure control logic
+        if (asset.file.includes("212")) {
+            viewer.exposure = "0.45";
+        } else if (asset.file.includes("121")) {
+            viewer.exposure = "1.5"; 
+        } else {
+            viewer.exposure = "1.1";
+        }
+
+        // Remove old hotspots
+        viewer.querySelectorAll('.Hotspot').forEach(h => h.remove());
+        
+        // Generate new hotspots from JSON data
+        if (asset.hotspots && asset.hotspots.length > 0) {
+            asset.hotspots.forEach(h => {
+                const b = document.createElement('button');
+                b.className = 'Hotspot'; 
+                
+                // Keep toggle state consistent
+                if (!toggle.checked) b.classList.add('hidden');
+                
+                b.slot = h.slot;
+                b.setAttribute('data-position', h.pos);
+                b.setAttribute('data-normal', h.norm || "0m 1m 0m");
+                b.setAttribute('data-visibility-attribute', 'visible');
+                b.innerHTML = `<div class="HotspotAnnotation">${h.label}</div>`;
+                
+                b.onclick = () => {
+                    viewer.cameraTarget = h.pos;
+                    viewer.cameraOrbit = "0deg 90deg 2.5m";
+                };
+                viewer.appendChild(b);
+            });
+        }
+
+        // Update UI Text
+        document.getElementById('asset-title').innerText = asset.name;
+        document.getElementById('spec-crew').innerText = asset.crew;
+        document.getElementById('spec-base').innerText = asset.base;
+        document.getElementById('spec-dim').innerText = `${asset.weight} / ${asset.length}`;
+        document.getElementById('spec-desc').innerText = asset.description;
+    }
