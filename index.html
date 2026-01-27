@@ -77,19 +77,37 @@
         /* --- UI OVERLAYS --- */
         .app-overlay { 
             position: absolute; top: 20px; left: 50%; transform: translateX(-50%); 
-            width: 90%; max-width: 500px; z-index: 100; 
+            width: 90%; max-width: 600px; z-index: 100; 
         }
         .control-panel { 
             background: var(--glass); backdrop-filter: blur(20px); 
             border: 1px solid var(--glass-border); padding: 12px 24px; 
             border-radius: 12px; display: flex; justify-content: space-between; align-items: center; 
+            gap: 20px;
         }
         .panel-label { font-size: 10px; color: var(--accent); text-transform: uppercase; font-weight: bold; }
         
         select { 
             background: transparent; color: white; border: none; 
-            font-weight: bold; outline: none; font-size: 15px; cursor: pointer; 
+            font-weight: bold; outline: none; font-size: 14px; cursor: pointer; 
         }
+
+        /* Toggle Switch Styling */
+        .toggle-container { display: flex; align-items: center; gap: 8px; }
+        .switch {
+            position: relative; display: inline-block; width: 34px; height: 20px;
+        }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #333; transition: .4s; border-radius: 20px;
+        }
+        .slider:before {
+            position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px;
+            background-color: white; transition: .4s; border-radius: 50%;
+        }
+        input:checked + .slider { background-color: var(--yun-orange); }
+        input:checked + .slider:before { transform: translateX(14px); }
         
         /* --- SIDE PANEL --- */
         .details-panel { 
@@ -108,7 +126,12 @@
         }
         .Hotspot { 
             background: var(--yun-orange); border-radius: 50%; width: 14px; 
-            height: 14px; border: 2px solid white; cursor: pointer; 
+            height: 14px; border: 2px solid white; cursor: pointer;
+            transition: opacity 0.4s ease, transform 0.3s ease;
+            opacity: 1;
+        }
+        .Hotspot.hidden {
+            opacity: 0; pointer-events: none; transform: scale(0.5);
         }
         .HotspotAnnotation { 
             background: rgba(22, 27, 34, 0.9); color: white; padding: 6px 12px; 
@@ -157,6 +180,15 @@
             <div class="panel-label">Active Feed</div>
             <select id="model-select"><option>Synchronizing...</option></select>
         </div>
+        
+        <div class="toggle-container">
+            <div class="panel-label">Hotspots</div>
+            <label class="switch">
+                <input type="checkbox" id="hotspot-toggle" checked>
+                <span class="slider"></span>
+            </label>
+        </div>
+
         <button onclick="document.getElementById('details-panel').classList.add('active')" style="background:var(--yun-orange); color:white; border:none; padding:12px 24px; border-radius:6px; font-weight:bold; cursor:pointer; font-size:12px;">SPECS</button>
     </div>
 </div>
@@ -177,6 +209,7 @@
 <script>
     const viewer = document.querySelector('#main-viewer');
     const select = document.querySelector('#model-select');
+    const toggle = document.querySelector('#hotspot-toggle');
     let fleetData = [];
 
     async function init() {
@@ -191,45 +224,52 @@
         }
     }
 
+    function toggleHotspots() {
+        const hotspots = viewer.querySelectorAll('.Hotspot');
+        hotspots.forEach(h => {
+            if (toggle.checked) {
+                h.classList.remove('hidden');
+            } else {
+                h.classList.add('hidden');
+            }
+        });
+    }
+
     function updateAsset(idx) {
         const asset = fleetData[idx];
         viewer.src = `models/${asset.file}.glb`;
         viewer.setAttribute('ios-src', `models/${asset.file}.usdz`);
         
-        // Auto-Zoom / Framing Reset
         viewer.cameraOrbit = "45deg 75deg 100%";
         viewer.fieldOfView = "auto";
 
-        // --- EXPOSURE TUNING ---
+        // Exposure control
         if (asset.file.includes("212")) {
-            viewer.exposure = "0.45"; // Reduced for the 212 model
+            viewer.exposure = "0.45";
         } else if (asset.file.includes("121")) {
             viewer.exposure = "1.5"; 
         } else {
             viewer.exposure = "1.1";
         }
 
-        // --- HOTSPOT MANAGEMENT ---
+        // Clean and regenerate hotspots
         viewer.querySelectorAll('.Hotspot').forEach(h => h.remove());
         
         let hotspots = [];
-
-        // Dynamic Hotspot Data for the 212 model
         if (asset.file.includes("212")) {
             hotspots = [
-                { slot: "hotspot-1", pos: "-0.002891593828472757m 0.679622714407742m 0.2817978674155637m", norm: "0m 1m 0m", label: "Main Loading Deck" },
-                { slot: "hotspot-2", pos: "0.24433117398527876m 0.7675237264761698m -0.38193203582270874m", norm: "-0.3439416465432956m 0.188786049390347m 0.9198173575926214m", label: "Controls" },
-                { slot: "hotspot-3", pos: "-0.13155839312821627m 0.06532827842427064m -0.6313346206927388m", norm: "-1m 0m 0m", label: "Engine" }
-            ];
-        } else if (asset.file === "tld_121_aircraft_loader") {
-            hotspots = [
-                { slot: "h1", pos: "0.23m 0.77m -0.42m", norm: "0m 1m 0m", label: "Console" }
+                { slot: "hotspot-1", pos: "-0.00289m 0.6796m 0.2817m", norm: "0m 1m 0m", label: "Main Loading Deck" },
+                { slot: "hotspot-2", pos: "0.2443m 0.7675m -0.3819m", norm: "-0.34m 0.18m 0.91m", label: "Controls" },
+                { slot: "hotspot-3", pos: "-0.1315m 0.0653m -0.6313m", norm: "-1m 0m 0m", label: "Engine" }
             ];
         }
 
         hotspots.forEach(h => {
             const b = document.createElement('button');
             b.className = 'Hotspot'; 
+            // If toggle is off when loading new model, ensure hotspots start hidden
+            if (!toggle.checked) b.classList.add('hidden');
+            
             b.slot = h.slot;
             b.setAttribute('data-position', h.pos);
             b.setAttribute('data-normal', h.norm);
@@ -242,7 +282,7 @@
             viewer.appendChild(b);
         });
 
-        // Meta Injection
+        // UI Meta Update
         document.getElementById('asset-title').innerText = asset.name;
         document.getElementById('spec-crew').innerText = asset.crew;
         document.getElementById('spec-base').innerText = asset.base;
@@ -251,6 +291,7 @@
     }
 
     select.addEventListener('change', (e) => updateAsset(e.target.value));
+    toggle.addEventListener('change', toggleHotspots);
     init();
 </script>
 
