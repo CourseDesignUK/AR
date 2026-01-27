@@ -9,7 +9,6 @@
     
     <style>
         :root {
-            /* Adjusted to a sleek Dark Gray */
             --app-bg: #1a1d23; 
             --yun-orange: #ff6a00; 
             --glass: rgba(255, 255, 255, 0.04);
@@ -33,11 +32,8 @@
 
         .radar-container {
             position: relative;
-            width: 320px;
-            height: 320px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            width: 320px; height: 320px;
+            display: flex; justify-content: center; align-items: center;
             margin-bottom: 20px;
         }
 
@@ -48,12 +44,10 @@
             border-radius: 50%; 
         }
 
-        /* The Sweeping Hand - Trailing Fade Logic */
         .radar-sweep { 
             position: absolute; 
             width: 100%; height: 100%; 
             border-radius: 50%;
-            /* Flipped gradient: starts solid at the "hand" and fades backward 90 degrees */
             background: conic-gradient(from -90deg at 50% 50%, transparent 270deg, rgba(255, 106, 0, 0.5) 360deg); 
             animation: sweep 3s linear infinite; 
         }
@@ -120,7 +114,7 @@
             background: rgba(22, 27, 34, 0.9); color: white; padding: 6px 12px; 
             border-radius: 4px; font-size: 11px; position: absolute; 
             transform: translate(20px, -50%); border: 1px solid var(--glass-border); 
-            white-space: nowrap; font-weight: bold;
+            white-space: nowrap; font-weight: bold; pointer-events: none;
         }
 
         #ar-button {
@@ -175,7 +169,6 @@
     shadow-intensity="1" 
     environment-image="legacy" 
     tone-mapping="neutral"
-    exposure="1.2" 
     interpolation-decay="200"
     interaction-prompt="none">
     <button slot="ar-button" id="ar-button">VIEW IN AR</button>
@@ -207,34 +200,47 @@
         viewer.cameraOrbit = "45deg 75deg 100%";
         viewer.fieldOfView = "auto";
 
-        // Adaptive Lighting 
+        // --- EXPOSURE TUNING ---
         if (asset.file.includes("212")) {
-            viewer.exposure = "0.75"; 
+            viewer.exposure = "0.45"; // Reduced for the 212 model
         } else if (asset.file.includes("121")) {
             viewer.exposure = "1.5"; 
         } else {
             viewer.exposure = "1.1";
         }
 
-        // Hotspot Management
+        // --- HOTSPOT MANAGEMENT ---
         viewer.querySelectorAll('.Hotspot').forEach(h => h.remove());
-        if (asset.file === "tld_121_aircraft_loader") {
-            const hs = [
-                { slot: "h1", pos: "0.23m 0.77m -0.42m", label: "Console" },
-                { slot: "h2", pos: "-0.13m 0.08m -0.64m", label: "Engine" }
+        
+        let hotspots = [];
+
+        // Dynamic Hotspot Data for the 212 model
+        if (asset.file.includes("212")) {
+            hotspots = [
+                { slot: "hotspot-1", pos: "-0.002891593828472757m 0.679622714407742m 0.2817978674155637m", norm: "0m 1m 0m", label: "Main Loading Deck" },
+                { slot: "hotspot-2", pos: "0.24433117398527876m 0.7675237264761698m -0.38193203582270874m", norm: "-0.3439416465432956m 0.188786049390347m 0.9198173575926214m", label: "Controls" },
+                { slot: "hotspot-3", pos: "-0.13155839312821627m 0.06532827842427064m -0.6313346206927388m", norm: "-1m 0m 0m", label: "Engine" }
             ];
-            hs.forEach(h => {
-                const b = document.createElement('button');
-                b.className = 'Hotspot'; b.slot = h.slot;
-                b.setAttribute('data-position', h.pos);
-                b.innerHTML = `<div class="HotspotAnnotation">${h.label}</div>`;
-                b.onclick = () => {
-                    viewer.cameraTarget = h.pos;
-                    viewer.cameraOrbit = "0deg 90deg 2.5m";
-                };
-                viewer.appendChild(b);
-            });
+        } else if (asset.file === "tld_121_aircraft_loader") {
+            hotspots = [
+                { slot: "h1", pos: "0.23m 0.77m -0.42m", norm: "0m 1m 0m", label: "Console" }
+            ];
         }
+
+        hotspots.forEach(h => {
+            const b = document.createElement('button');
+            b.className = 'Hotspot'; 
+            b.slot = h.slot;
+            b.setAttribute('data-position', h.pos);
+            b.setAttribute('data-normal', h.norm);
+            b.setAttribute('data-visibility-attribute', 'visible');
+            b.innerHTML = `<div class="HotspotAnnotation">${h.label}</div>`;
+            b.onclick = () => {
+                viewer.cameraTarget = h.pos;
+                viewer.cameraOrbit = "0deg 90deg 2.5m";
+            };
+            viewer.appendChild(b);
+        });
 
         // Meta Injection
         document.getElementById('asset-title').innerText = asset.name;
