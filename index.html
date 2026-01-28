@@ -42,7 +42,6 @@
             position: absolute; width: 100%; height: 100%; border-radius: 50%;
             background: conic-gradient(from -90deg at 50% 50%, transparent 270deg, rgba(255, 106, 0, 0.4) 360deg); 
             animation: sweep 3s linear infinite; 
-            border: 1px solid rgba(255, 106, 0, 0.1);
         }
         @keyframes sweep { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
@@ -52,14 +51,13 @@
             font-weight: bold; letter-spacing: 2px; text-transform: uppercase;
             z-index: 3001; transition: 0.3s;
         }
-        .commence-btn:hover { background: var(--yun-orange); box-shadow: 0 0 20px rgba(255, 106, 0, 0.4); }
 
         /* --- UI OVERLAYS --- */
         .app-overlay { 
             position: absolute; 
             top: env(safe-area-inset-top, 20px); 
             left: 50%; transform: translateX(-50%); 
-            width: 92%; max-width: 600px; 
+            width: 92%; max-width: 650px; 
             z-index: 100; 
         }
 
@@ -69,40 +67,42 @@
             border: 1px solid var(--glass-border); 
             padding: 12px 18px; border-radius: 14px; 
             display: flex; justify-content: space-between; align-items: center;
+            gap: 15px;
         }
 
         .panel-label { font-size: 9px; color: var(--accent); text-transform: uppercase; font-weight: 800; letter-spacing: 1px; margin-bottom: 3px; }
         select { background: transparent; color: white; border: none; font-weight: bold; font-size: 14px; outline: none; cursor: pointer; }
-        select option { background: #1a1d23; color: white; }
+        
+        .button-group { display: flex; gap: 8px; }
 
-        .action-bar {
+        .ui-btn {
+            background: var(--glass-border);
+            color: white;
+            border: 1px solid transparent;
+            padding: 10px 14px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 11px;
+            text-transform: uppercase;
+            transition: 0.2s;
+        }
+
+        .ui-btn.active {
+            background: var(--yun-orange);
+            border-color: white;
+        }
+
+        .ui-btn.primary { background: var(--yun-orange); }
+
+        /* --- AR BUTTON AT BOTTOM --- */
+        .ar-container {
             position: absolute;
             bottom: env(safe-area-inset-bottom, 30px);
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 12px;
+            left: 50%; transform: translateX(-50%);
             z-index: 150;
         }
 
-        .fab {
-            background: var(--glass);
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            color: white;
-            padding: 12px 20px;
-            border-radius: 30px;
-            font-size: 11px;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .fab.active { background: var(--yun-orange); border-color: white; }
-
-        /* --- SIDE PANEL --- */
         .details-panel { 
             position: fixed; top: 0; right: -100%; width: 100%; max-width: 400px; height: 100%; 
             background: rgba(20, 22, 26, 0.98); backdrop-filter: blur(30px);
@@ -111,13 +111,12 @@
         }
         .details-panel.active { right: 0; }
         .spec-content { padding: 80px 40px; }
-        .spec-item { margin-bottom: 25px; border-bottom: 1px solid var(--glass-border); padding-bottom: 12px; }
 
         /* --- HOTSPOTS --- */
         model-viewer { width: 100vw; height: 100vh; background: #1a1d23; }
         .Hotspot { 
             background: var(--yun-orange); border-radius: 50%; width: 14px; height: 14px; 
-            border: 2px solid white; cursor: pointer; transition: opacity 0.4s, transform 0.4s; 
+            border: 2px solid white; cursor: pointer; transition: 0.4s; 
             box-shadow: 0 0 10px rgba(255,106,0,0.5);
         }
         .Hotspot.hidden { opacity: 0; transform: scale(0); pointer-events: none; }
@@ -128,8 +127,7 @@
         }
 
         @media (max-width: 480px) {
-            .fab span { display: none; }
-            .details-panel { max-width: 100%; }
+            .ui-btn span { display: none; } /* Handle small screens if needed */
         }
     </style>
 </head>
@@ -145,25 +143,36 @@
 
 <div class="app-overlay">
     <div class="control-panel">
-        <div style="display: flex; flex-direction: column;">
+        <div style="display: flex; flex-direction: column; flex-grow: 1;">
             <div class="panel-label">Active Asset</div>
             <select id="model-select"></select>
         </div>
-        <button onclick="document.getElementById('details-panel').classList.add('active')" style="background:var(--yun-orange); color:white; border:none; padding:10px 18px; border-radius:6px; font-weight:bold; cursor:pointer; font-size:11px;">SPECS</button>
+        <div class="button-group">
+            <button id="toggle-hotspots" class="ui-btn active">Hotspots</button>
+            <button onclick="document.getElementById('details-panel').classList.add('active')" class="ui-btn primary">Specs</button>
+        </div>
     </div>
 </div>
 
-<div class="action-bar">
-    <button id="toggle-hotspots" class="fab active">Telemetry</button>
-    <button id="ar-button" class="fab">View In AR</button>
+<div class="ar-container">
+    <button id="ar-button" class="ui-btn" style="border-radius: 30px; padding: 12px 25px; background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border);">View in AR</button>
 </div>
 
 <div id="details-panel" class="details-panel">
     <div class="spec-content">
         <h2 id="asset-title" style="color: var(--yun-orange); font-weight: 300; text-transform: uppercase; margin-bottom:40px;">-</h2>
-        <div class="spec-item"><span class="panel-label">Operated By</span><span id="spec-crew" style="display:block; margin-top:5px;">-</span></div>
-        <div class="spec-item"><span class="panel-label">Primary Zone</span><span id="spec-base" style="display:block; margin-top:5px;">-</span></div>
-        <div class="spec-item"><span class="panel-label">Description</span><p id="spec-desc" style="font-size:14px; opacity:0.8; line-height:1.6;"></p></div>
+        <div class="spec-item" style="margin-bottom: 25px; border-bottom: 1px solid var(--glass-border); padding-bottom: 12px;">
+            <span class="panel-label">Operated By</span>
+            <span id="spec-crew" style="display:block; margin-top:5px;">-</span>
+        </div>
+        <div class="spec-item" style="margin-bottom: 25px; border-bottom: 1px solid var(--glass-border); padding-bottom: 12px;">
+            <span class="panel-label">Primary Zone</span>
+            <span id="spec-base" style="display:block; margin-top:5px;">-</span>
+        </div>
+        <div class="spec-item" style="margin-bottom: 25px; border-bottom: 1px solid var(--glass-border); padding-bottom: 12px;">
+            <span class="panel-label">Description</span>
+            <p id="spec-desc" style="font-size:14px; opacity:0.8; line-height:1.6;"></p>
+        </div>
         <button onclick="document.getElementById('details-panel').classList.remove('active')" style="width:100%; background:var(--yun-orange); color:white; border:none; padding:15px; border-radius:8px; cursor:pointer; font-weight:bold; text-transform:uppercase;">Dismiss</button>
     </div>
 </div>
@@ -210,9 +219,7 @@
         const screen = document.getElementById('start-screen');
         screen.style.opacity = '0';
         screen.style.pointerEvents = 'none';
-        setTimeout(() => {
-            screen.style.display = 'none';
-        }, 800);
+        setTimeout(() => screen.style.display = 'none', 800);
     }
 
     function init() {
@@ -229,9 +236,7 @@
         document.getElementById('spec-base').innerText = asset.base;
         document.getElementById('spec-desc').innerText = asset.description;
 
-        // Clear existing hotspots
-        const existing = viewer.querySelectorAll('.Hotspot');
-        existing.forEach(h => h.remove());
+        viewer.querySelectorAll('.Hotspot').forEach(h => h.remove());
 
         viewer.addEventListener('load', () => {
             const points = hotspotMap[asset.file];
@@ -243,7 +248,6 @@
                     b.setAttribute('data-position', p.pos);
                     b.setAttribute('data-normal', p.norm);
                     b.innerHTML = `<div class="HotspotAnnotation">${p.label}</div>`;
-                    
                     b.onclick = () => {
                         viewer.cameraTarget = p.pos;
                         viewer.cameraOrbit = "45deg 75deg 4m";
@@ -263,8 +267,6 @@
 
     arBtn.onclick = () => viewer.activateAR();
     select.onchange = (e) => updateAsset(e.target.value);
-
-    // Initial check to ensure model-viewer is ready
     window.addEventListener('load', init);
 </script>
 
