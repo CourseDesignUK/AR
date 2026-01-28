@@ -3,7 +3,7 @@
 <head>
     <title>YUNEXPRESS - GLOBAL FLEET TRACKER</title>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
     
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
     
@@ -12,7 +12,7 @@
             --app-bg: #1a1d23; 
             --yun-orange: #ff6a00; 
             --glass: rgba(255, 255, 255, 0.04);
-            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.12);
             --accent: #ff9d5c;
         }
 
@@ -20,24 +20,24 @@
             margin: 0; padding: 0; width: 100%; height: 100%; 
             overflow: hidden; background-color: var(--app-bg); 
             font-family: 'Inter', -apple-system, sans-serif;
+            color: white;
         }
 
         /* --- START SCREEN --- */
         #start-screen { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: radial-gradient(circle at center, #23272f 0%, #1a1d23 100%); 
-            z-index: 1000; display: flex; flex-direction: column; 
-            justify-content: center; align-items: center; transition: opacity 0.8s; 
+            z-index: 3000; display: flex; flex-direction: column; 
+            justify-content: center; align-items: center; transition: opacity 0.8s, visibility 0.8s; 
         }
 
         .radar-container {
-            position: relative;
-            width: 320px; height: 320px;
+            position: relative; width: 260px; height: 260px;
             display: flex; justify-content: center; align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
         }
 
-        .radar-ring { position: absolute; width: 100%; height: 100%; border: 1px solid rgba(255, 106, 0, 0.15); border-radius: 50%; }
+        .radar-ring { position: absolute; width: 100%; height: 100%; border: 1px solid rgba(255, 106, 0, 0.2); border-radius: 50%; }
         .radar-sweep { 
             position: absolute; width: 100%; height: 100%; border-radius: 50%;
             background: conic-gradient(from -90deg at 50% 50%, transparent 270deg, rgba(255, 106, 0, 0.5) 360deg); 
@@ -47,22 +47,41 @@
 
         .commence-btn { 
             background: transparent; color: white; border: 1px solid var(--yun-orange); 
-            padding: 12px 30px; border-radius: 4px; cursor: pointer; 
+            padding: 14px 35px; border-radius: 4px; cursor: pointer; 
             font-weight: bold; letter-spacing: 2px; text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+        .commence-btn:hover { background: var(--yun-orange); box-shadow: 0 0 20px rgba(255, 106, 0, 0.4); }
+
+        /* --- UI OVERLAYS (SAFE ZONE FIXES) --- */
+        .app-overlay { 
+            position: absolute; 
+            top: env(safe-area-inset-top, 20px); 
+            left: 50%; transform: translateX(-50%); 
+            width: 92%; max-width: 600px; 
+            z-index: 100; 
         }
 
-        /* --- UI OVERLAYS --- */
-        .app-overlay { position: absolute; top: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 600px; z-index: 100; }
         .control-panel { 
-            background: var(--glass); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); 
-            padding: 12px 24px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; 
+            background: var(--glass); 
+            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border); 
+            padding: 12px 18px; border-radius: 14px; 
+            display: flex; justify-content: space-between; align-items: center;
+            gap: 12px;
         }
-        .panel-label { font-size: 10px; color: var(--accent); text-transform: uppercase; font-weight: bold; }
-        select { background: transparent; color: white; border: none; font-weight: bold; font-size: 14px; cursor: pointer; outline: none; }
 
-        /* Telemetry Toggle */
-        .toggle-group { display: flex; align-items: center; gap: 10px; }
-        .switch { position: relative; display: inline-block; width: 34px; height: 18px; }
+        .control-item { display: flex; flex-direction: column; min-width: 0; }
+        .panel-label { font-size: 9px; color: var(--accent); text-transform: uppercase; font-weight: 800; letter-spacing: 1px; margin-bottom: 3px; }
+        
+        select { 
+            background: transparent; color: white; border: none; 
+            font-weight: bold; font-size: 14px; cursor: pointer; outline: none;
+            max-width: 140px;
+        }
+
+        .toggle-group { display: flex; align-items: center; gap: 8px; }
+        .switch { position: relative; display: inline-block; width: 34px; height: 18px; flex-shrink: 0; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #333; transition: .4s; border-radius: 20px; }
         .slider:before { position: absolute; content: ""; height: 12px; width: 12px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
@@ -71,21 +90,33 @@
 
         /* --- SIDE PANEL --- */
         .details-panel { 
-            position: absolute; top: 0; right: -100%; width: 100%; max-width: 400px; height: 100%; 
-            background: rgba(26, 29, 35, 0.95); backdrop-filter: blur(30px); transition: right 0.6s cubic-bezier(0.16, 1, 0.3, 1); 
-            color: white; border-left: 1px solid var(--glass-border); overflow-y: auto; z-index: 200; 
+            position: fixed; top: 0; right: -100%; width: 100%; max-width: 400px; height: 100%; 
+            background: rgba(20, 22, 26, 0.98); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+            transition: right 0.5s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.5s; 
+            border-left: 1px solid var(--glass-border); overflow-y: auto; z-index: 2000; visibility: hidden;
         }
-        .details-panel.active { right: 0; }
+        .details-panel.active { right: 0; visibility: visible; }
+        .spec-content { padding: 80px 40px 40px 40px; }
         .spec-item { margin-bottom: 25px; border-bottom: 1px solid var(--glass-border); padding-bottom: 12px; }
 
         /* --- HOTSPOTS --- */
-        model-viewer { width: 100vw; height: 100vh; }
-        .Hotspot { background: var(--yun-orange); border-radius: 50%; width: 14px; height: 14px; border: 2px solid white; cursor: pointer; transition: opacity 0.3s; }
+        model-viewer { width: 100vw; height: 100vh; background-color: var(--app-bg); }
+        .Hotspot { 
+            background: var(--yun-orange); border-radius: 50%; width: 14px; height: 14px; 
+            border: 2px solid white; cursor: pointer; transition: opacity 0.3s; 
+            box-shadow: 0 0 12px rgba(255,106,0,0.6);
+        }
         .Hotspot.hidden { opacity: 0; pointer-events: none; }
         .HotspotAnnotation { 
-            background: rgba(22, 27, 34, 0.9); color: white; padding: 6px 12px; border-radius: 4px; 
-            font-size: 11px; position: absolute; transform: translate(20px, -50%); border: 1px solid var(--glass-border); 
+            background: rgba(0, 0, 0, 0.85); color: white; padding: 6px 12px; border-radius: 4px; 
+            font-size: 11px; position: absolute; transform: translate(22px, -50%); border: 1px solid var(--yun-orange); 
             white-space: nowrap; font-weight: bold; pointer-events: none;
+        }
+
+        @media (max-width: 480px) {
+            .toggle-group { display: none; }
+            .spec-content { padding: 60px 25px; }
+            select { font-size: 12px; max-width: 110px; }
         }
     </style>
 </head>
@@ -96,41 +127,43 @@
         <div class="radar-ring"></div>
         <div class="radar-sweep"></div>
         <div style="z-index: 1001; text-align: center;">
-            <div style="background:var(--yun-orange); color:white; padding:5px 12px; font-weight:900; font-style:italic; border-radius:4px;">YUN</div>
+            <div style="background:var(--yun-orange); color:white; padding:6px 16px; font-weight:900; font-style:italic; border-radius:4px; letter-spacing: 2px;">YUN</div>
         </div>
     </div>
-    <button class="commence-btn" onclick="document.getElementById('start-screen').style.opacity='0'; setTimeout(()=>document.getElementById('start-screen').style.visibility='hidden', 800)">Initialize Link</button>
+    <button class="commence-btn" onclick="const s=document.getElementById('start-screen'); s.style.opacity='0'; setTimeout(()=>s.style.visibility='hidden', 800)">Initialize Feed</button>
 </div>
 
 <div id="details-panel" class="details-panel">
-    <div style="padding: 60px 40px;">
-        <h2 id="asset-title" style="font-weight: 300; text-transform: uppercase; margin-bottom:40px; font-size:28px;">-</h2>
+    <div class="spec-content">
+        <h2 id="asset-title" style="font-weight: 300; text-transform: uppercase; margin-bottom:40px; font-size:26px; color: var(--yun-orange); letter-spacing:1px;">-</h2>
         <div class="spec-item"><span class="panel-label">Operated By</span><span id="spec-crew" style="display:block; margin-top:5px;">-</span></div>
         <div class="spec-item"><span class="panel-label">Primary Zone</span><span id="spec-base" style="display:block; margin-top:5px;">-</span></div>
         <div class="spec-item"><span class="panel-label">Metrics</span><span id="spec-dim" style="display:block; margin-top:5px;">-</span></div>
-        <div class="spec-item"><span class="panel-label">Description</span><span id="spec-desc" style="display:block; margin-top:5px; opacity:0.8; font-size:14px;">-</span></div>
-        <button onclick="document.getElementById('details-panel').classList.remove('active')" style="width:100%; background:var(--yun-orange); color:white; border:none; padding:18px; border-radius:8px; cursor:pointer; font-weight:bold;">CLOSE</button>
+        <div class="spec-item"><span class="panel-label">Asset Overview</span><span id="spec-desc" style="display:block; margin-top:5px; opacity:0.8; font-size:14px; line-height:1.6;">-</span></div>
+        <button onclick="document.getElementById('details-panel').classList.remove('active')" style="width:100%; background:var(--yun-orange); color:white; border:none; padding:18px; border-radius:8px; cursor:pointer; font-weight:bold; margin-top: 20px; text-transform: uppercase; letter-spacing: 1px;">Dismiss Specs</button>
     </div>
 </div>
 
 <div class="app-overlay">
     <div class="control-panel">
-        <div>
-            <div class="panel-label">Active Feed</div>
+        <div class="control-item">
+            <div class="panel-label">Fleet Asset</div>
             <select id="model-select"></select>
         </div>
+        
         <div class="toggle-group">
-            <div class="panel-label">Telemetry</div>
+            <div class="panel-label">Hotspots</div>
             <label class="switch">
                 <input type="checkbox" id="hotspot-toggle" checked>
                 <span class="slider"></span>
             </label>
         </div>
-        <button onclick="document.getElementById('details-panel').classList.add('active')" style="background:var(--yun-orange); color:white; border:none; padding:10px 20px; border-radius:6px; font-weight:bold; cursor:pointer; font-size:11px;">SPECS</button>
+
+        <button onclick="document.getElementById('details-panel').classList.add('active')" style="background:var(--yun-orange); color:white; border:none; padding:10px 18px; border-radius:6px; font-weight:bold; cursor:pointer; font-size:11px; flex-shrink:0; letter-spacing:0.5px;">SPECS</button>
     </div>
 </div>
 
-<model-viewer id="main-viewer" ar camera-controls auto-rotate shadow-intensity="1" environment-image="legacy" tone-mapping="neutral"></model-viewer>
+<model-viewer id="main-viewer" ar camera-controls auto-rotate shadow-intensity="1" environment-image="legacy" tone-mapping="neutral" interaction-prompt="none"></model-viewer>
 
 <script>
     const viewer = document.querySelector('#main-viewer');
@@ -138,12 +171,17 @@
     const toggle = document.querySelector('#hotspot-toggle');
     let fleetData = [];
 
-    // Define hotspots directly in script for reliability
+    // Hotspot Registry Map
     const hotspotMap = {
         "tld_121_aircraft_loader": [
             { pos: "-0.00289m 0.6796m 0.2817m", norm: "0m 1m 0m", label: "Main Loading Deck" },
             { pos: "0.2443m 0.7675m -0.3819m", norm: "-0.34m 0.18m 0.91m", label: "Controls" },
             { pos: "-0.1315m 0.0653m -0.6313m", norm: "-1m 0m 0m", label: "Engine" }
+        ],
+        "gpu_aiport_ground_power_unit": [
+            { pos: "-1.2840789556503296m 0.7819558181829164m 0.05466036998161867m", norm: "-1m 0m 0m", label: "Control Panel" },
+            { pos: "1.1345745549510462m 1.1426336548105873m -0.6715130852216802m", norm: "0.000006794102855157741m 0.010522975728222403m 0.9999446319350204m", label: "Power Cable" },
+            { pos: "-1.3294721852771438m 1.3710423101303315m -0.08365852030354018m", norm: "-0.965919463337721m -0.25883152122923964m 0.002415359916628815m", label: "Handle" }
         ]
     };
 
@@ -153,20 +191,26 @@
             fleetData = await res.json();
             select.innerHTML = fleetData.map((m, i) => `<option value="${i}">${m.name.toUpperCase()}</option>`).join('');
             updateAsset(0);
-        } catch (e) { console.error("Load Error", e); }
+        } catch (e) { 
+            console.error("Load Error", e);
+            select.innerHTML = '<option>NO ASSETS LOADED</option>';
+        }
     }
 
     function updateAsset(idx) {
         const asset = fleetData[idx];
+        if(!asset) return;
+
         viewer.src = `models/${asset.file}.glb`;
         
-        // Apply exposure reduction for 121/212 models
-        viewer.exposure = asset.file.includes("121") || asset.file.includes("212") ? "0.45" : "1.1";
+        // Lighting adjustments for specific industrial models
+        const darkModels = ["121", "212", "gpu"];
+        viewer.exposure = darkModels.some(t => asset.file.includes(t)) ? "0.5" : "1.0";
 
-        // Remove existing hotspots
+        // Remove old hotspots
         viewer.querySelectorAll('.Hotspot').forEach(h => h.remove());
 
-        // Wait for model load to place hotspots
+        // Generate new hotspots on model load
         viewer.addEventListener('load', () => {
             const points = hotspotMap[asset.file];
             if (points) {
@@ -176,19 +220,24 @@
                     b.slot = `hotspot-${i}`;
                     b.setAttribute('data-position', p.pos);
                     b.setAttribute('data-normal', p.norm);
+                    b.setAttribute('data-visibility-attribute', 'visible');
+                    
                     if (!toggle.checked) b.classList.add('hidden');
                     
                     b.innerHTML = `<div class="HotspotAnnotation">${p.label}</div>`;
+                    
+                    // Interaction: Camera fly-to
                     b.onclick = () => {
                         viewer.cameraTarget = p.pos;
-                        viewer.cameraOrbit = "0deg 80deg 2.5m";
+                        viewer.cameraOrbit = "45deg 75deg 3.5m";
                     };
+                    
                     viewer.appendChild(b);
                 });
             }
         }, { once: true });
 
-        // Update UI
+        // Update Text Data
         document.getElementById('asset-title').innerText = asset.name;
         document.getElementById('spec-crew').innerText = asset.crew;
         document.getElementById('spec-base').innerText = asset.base;
@@ -196,6 +245,7 @@
         document.getElementById('spec-desc').innerText = asset.description;
     }
 
+    // Hotspot Visibility Toggle
     toggle.addEventListener('change', () => {
         viewer.querySelectorAll('.Hotspot').forEach(h => {
             toggle.checked ? h.classList.remove('hidden') : h.classList.add('hidden');
@@ -203,6 +253,8 @@
     });
 
     select.addEventListener('change', (e) => updateAsset(e.target.value));
+    
+    // Kickoff
     init();
 </script>
 
