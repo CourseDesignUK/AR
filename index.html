@@ -33,7 +33,7 @@
         }
 
         .radar-container {
-            position: relative; width: 260px; height: 260px;
+            position: relative; width: 200px; height: 200px;
             display: flex; justify-content: center; align-items: center;
             margin-bottom: 30px;
         }
@@ -47,17 +47,17 @@
 
         .commence-btn { 
             background: transparent; color: white; border: 1px solid var(--yun-orange); 
-            padding: 14px 35px; border-radius: 4px; cursor: pointer; 
+            padding: 12px 30px; border-radius: 4px; cursor: pointer; 
             font-weight: bold; letter-spacing: 2px; text-transform: uppercase;
-            z-index: 3001; transition: 0.3s;
+            z-index: 3001;
         }
 
-        /* --- UI OVERLAYS --- */
+        /* --- COMPACT UI OVERLAY --- */
         .app-overlay { 
             position: absolute; 
-            top: env(safe-area-inset-top, 20px); 
+            top: env(safe-area-inset-top, 15px); 
             left: 50%; transform: translateX(-50%); 
-            width: 92%; max-width: 650px; 
+            width: 94%; max-width: 500px; 
             z-index: 100; 
         }
 
@@ -65,69 +65,85 @@
             background: var(--glass); 
             backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
             border: 1px solid var(--glass-border); 
-            padding: 12px 18px; border-radius: 14px; 
+            padding: 10px 12px; border-radius: 12px; 
             display: flex; justify-content: space-between; align-items: center;
-            gap: 15px;
+            gap: 8px;
         }
 
-        .panel-label { font-size: 9px; color: var(--accent); text-transform: uppercase; font-weight: 800; letter-spacing: 1px; margin-bottom: 3px; }
-        select { background: transparent; color: white; border: none; font-weight: bold; font-size: 14px; outline: none; cursor: pointer; }
+        .asset-info {
+            display: flex; flex-direction: column;
+            min-width: 0; /* Important for text truncation */
+            flex: 1;
+        }
+
+        .panel-label { 
+            font-size: 8px; color: var(--accent); 
+            text-transform: uppercase; font-weight: 800; 
+            letter-spacing: 0.5px; margin-bottom: 2px; 
+        }
+
+        select { 
+            background: transparent; color: white; border: none; 
+            font-weight: bold; font-size: 13px; outline: none; 
+            cursor: pointer; width: 100%;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
         
-        .button-group { display: flex; gap: 8px; }
+        .button-group { display: flex; gap: 6px; flex-shrink: 0; }
 
         .ui-btn {
             background: var(--glass-border);
-            color: white;
-            border: 1px solid transparent;
-            padding: 10px 14px;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 11px;
-            text-transform: uppercase;
-            transition: 0.2s;
+            color: white; border: 1px solid transparent;
+            padding: 8px 10px; border-radius: 6px;
+            font-weight: 700; cursor: pointer;
+            font-size: 10px; text-transform: uppercase;
+            transition: 0.2s; white-space: nowrap;
         }
 
-        .ui-btn.active {
-            background: var(--yun-orange);
-            border-color: white;
-        }
-
+        .ui-btn.active { background: var(--yun-orange); border-color: white; }
         .ui-btn.primary { background: var(--yun-orange); }
 
-        /* --- AR BUTTON AT BOTTOM --- */
+        /* --- BOTTOM AR BUTTON --- */
         .ar-container {
             position: absolute;
-            bottom: env(safe-area-inset-bottom, 30px);
+            bottom: env(safe-area-inset-bottom, 25px);
             left: 50%; transform: translateX(-50%);
             z-index: 150;
         }
 
+        .ar-btn {
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            color: white; padding: 10px 20px;
+            border-radius: 25px; font-size: 11px;
+            text-transform: uppercase; font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* --- SIDE PANEL --- */
         .details-panel { 
-            position: fixed; top: 0; right: -100%; width: 100%; max-width: 400px; height: 100%; 
-            background: rgba(20, 22, 26, 0.98); backdrop-filter: blur(30px);
-            transition: right 0.5s cubic-bezier(0.16, 1, 0.3, 1); 
+            position: fixed; top: 0; right: -100%; width: 100%; max-width: 350px; height: 100%; 
+            background: rgba(18, 20, 24, 0.98); backdrop-filter: blur(30px);
+            transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1); 
             z-index: 2000; border-left: 1px solid var(--glass-border);
         }
         .details-panel.active { right: 0; }
-        .spec-content { padding: 80px 40px; }
+        .spec-content { padding: 60px 30px; }
+        .spec-item { margin-bottom: 20px; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px; }
 
         /* --- HOTSPOTS --- */
         model-viewer { width: 100vw; height: 100vh; background: #1a1d23; }
         .Hotspot { 
             background: var(--yun-orange); border-radius: 50%; width: 14px; height: 14px; 
-            border: 2px solid white; cursor: pointer; transition: 0.4s; 
+            border: 2px solid white; cursor: pointer; transition: 0.3s; 
             box-shadow: 0 0 10px rgba(255,106,0,0.5);
         }
         .Hotspot.hidden { opacity: 0; transform: scale(0); pointer-events: none; }
         .HotspotAnnotation { 
-            background: rgba(0, 0, 0, 0.85); color: white; padding: 6px 12px; border-radius: 4px; 
-            font-size: 10px; position: absolute; transform: translate(20px, -50%); border: 1px solid var(--yun-orange);
-            white-space: nowrap; pointer-events: none; font-weight: bold;
-        }
-
-        @media (max-width: 480px) {
-            .ui-btn span { display: none; } /* Handle small screens if needed */
+            background: rgba(0, 0, 0, 0.85); color: white; padding: 5px 10px; border-radius: 4px; 
+            font-size: 10px; position: absolute; transform: translate(15px, -50%); border: 1px solid var(--yun-orange);
+            white-space: nowrap; pointer-events: none;
         }
     </style>
 </head>
@@ -136,14 +152,14 @@
 <div id="start-screen">
     <div class="radar-container">
         <div class="radar-sweep"></div>
-        <div style="z-index: 3002; background:var(--yun-orange); color:white; padding:6px 16px; font-weight:900; font-style:italic; border-radius:4px;">YUN</div>
+        <div style="z-index: 3002; background:var(--yun-orange); color:white; padding:6px 14px; font-weight:900; font-style:italic; border-radius:4px; font-size: 14px;">YUN</div>
     </div>
     <button class="commence-btn" onclick="startApp()">Initialize Feed</button>
 </div>
 
 <div class="app-overlay">
     <div class="control-panel">
-        <div style="display: flex; flex-direction: column; flex-grow: 1;">
+        <div class="asset-info">
             <div class="panel-label">Active Asset</div>
             <select id="model-select"></select>
         </div>
@@ -155,25 +171,16 @@
 </div>
 
 <div class="ar-container">
-    <button id="ar-button" class="ui-btn" style="border-radius: 30px; padding: 12px 25px; background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border);">View in AR</button>
+    <button id="ar-button" class="ar-btn">View in AR</button>
 </div>
 
 <div id="details-panel" class="details-panel">
     <div class="spec-content">
-        <h2 id="asset-title" style="color: var(--yun-orange); font-weight: 300; text-transform: uppercase; margin-bottom:40px;">-</h2>
-        <div class="spec-item" style="margin-bottom: 25px; border-bottom: 1px solid var(--glass-border); padding-bottom: 12px;">
-            <span class="panel-label">Operated By</span>
-            <span id="spec-crew" style="display:block; margin-top:5px;">-</span>
-        </div>
-        <div class="spec-item" style="margin-bottom: 25px; border-bottom: 1px solid var(--glass-border); padding-bottom: 12px;">
-            <span class="panel-label">Primary Zone</span>
-            <span id="spec-base" style="display:block; margin-top:5px;">-</span>
-        </div>
-        <div class="spec-item" style="margin-bottom: 25px; border-bottom: 1px solid var(--glass-border); padding-bottom: 12px;">
-            <span class="panel-label">Description</span>
-            <p id="spec-desc" style="font-size:14px; opacity:0.8; line-height:1.6;"></p>
-        </div>
-        <button onclick="document.getElementById('details-panel').classList.remove('active')" style="width:100%; background:var(--yun-orange); color:white; border:none; padding:15px; border-radius:8px; cursor:pointer; font-weight:bold; text-transform:uppercase;">Dismiss</button>
+        <h2 id="asset-title" style="color: var(--yun-orange); font-weight: 300; text-transform: uppercase; margin-bottom:30px; font-size: 1.5rem;">-</h2>
+        <div class="spec-item"><span class="panel-label">Operated By</span><span id="spec-crew" style="display:block; margin-top:4px; font-size: 14px;">-</span></div>
+        <div class="spec-item"><span class="panel-label">Primary Zone</span><span id="spec-base" style="display:block; margin-top:4px; font-size: 14px;">-</span></div>
+        <div class="spec-item"><span class="panel-label">Description</span><p id="spec-desc" style="font-size:13px; opacity:0.8; line-height:1.5; margin-top:8px;"></p></div>
+        <button onclick="document.getElementById('details-panel').classList.remove('active')" style="width:100%; background:var(--yun-orange); color:white; border:none; padding:14px; border-radius:8px; cursor:pointer; font-weight:bold; text-transform:uppercase; margin-top: 20px;">Dismiss</button>
     </div>
 </div>
 
