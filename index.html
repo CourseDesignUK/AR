@@ -31,14 +31,27 @@
             justify-content: center; align-items: center; transition: opacity 0.8s, visibility 0.8s; 
         }
 
+        .radar-container {
+            position: relative; width: 260px; height: 260px;
+            display: flex; justify-content: center; align-items: center;
+            margin-bottom: 30px;
+        }
+
         .radar-sweep { 
-            position: absolute; width: 260px; height: 260px; border-radius: 50%;
+            position: absolute; width: 100%; height: 100%; border-radius: 50%;
             background: conic-gradient(from -90deg at 50% 50%, transparent 270deg, rgba(255, 106, 0, 0.4) 360deg); 
             animation: sweep 3s linear infinite; 
         }
         @keyframes sweep { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-        /* --- TOP CONTROL PANEL --- */
+        .commence-btn { 
+            background: transparent; color: white; border: 1px solid var(--yun-orange); 
+            padding: 14px 35px; border-radius: 4px; cursor: pointer; 
+            font-weight: bold; letter-spacing: 2px; text-transform: uppercase;
+            z-index: 3001;
+        }
+
+        /* --- UI OVERLAYS --- */
         .app-overlay { 
             position: absolute; 
             top: env(safe-area-inset-top, 20px); 
@@ -56,16 +69,16 @@
         }
 
         .panel-label { font-size: 9px; color: var(--accent); text-transform: uppercase; font-weight: 800; letter-spacing: 1px; margin-bottom: 3px; }
-        select { background: transparent; color: white; border: none; font-weight: bold; font-size: 14px; outline: none; }
+        select { background: transparent; color: white; border: none; font-weight: bold; font-size: 14px; outline: none; cursor: pointer; }
 
-        /* --- BOTTOM ACTION BAR (Aeroviewer Style) --- */
+        /* --- ACTION BAR (AEROWVIEWER STYLE) --- */
         .action-bar {
             position: absolute;
             bottom: env(safe-area-inset-bottom, 30px);
             left: 50%;
             transform: translateX(-50%);
             display: flex;
-            gap: 15px;
+            gap: 12px;
             z-index: 150;
         }
 
@@ -76,7 +89,7 @@
             color: white;
             padding: 12px 20px;
             border-radius: 30px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
             text-transform: uppercase;
             letter-spacing: 1px;
@@ -84,52 +97,56 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            transition: all 0.3s;
+            transition: 0.3s;
         }
 
-        .fab:hover { background: rgba(255, 255, 255, 0.1); border-color: var(--yun-orange); }
         .fab.active { background: var(--yun-orange); border-color: white; }
-
-        /* AR Button only shows when supported */
-        #ar-button { display: none; }
-        model-viewer[ar-status="active"] #ar-button, 
-        model-viewer.ar-ready #ar-button { display: flex; }
 
         /* --- SIDE PANEL --- */
         .details-panel { 
             position: fixed; top: 0; right: -100%; width: 100%; max-width: 400px; height: 100%; 
             background: rgba(20, 22, 26, 0.98); backdrop-filter: blur(30px);
             transition: right 0.5s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.5s; 
-            z-index: 2000; visibility: hidden;
+            z-index: 2000; visibility: hidden; border-left: 1px solid var(--glass-border);
         }
         .details-panel.active { right: 0; visibility: visible; }
         .spec-content { padding: 80px 40px; }
+        .spec-item { margin-bottom: 25px; border-bottom: 1px solid var(--glass-border); padding-bottom: 12px; }
 
         /* --- HOTSPOTS --- */
         model-viewer { width: 100vw; height: 100vh; background: #1a1d23; }
         .Hotspot { 
             background: var(--yun-orange); border-radius: 50%; width: 14px; height: 14px; 
             border: 2px solid white; cursor: pointer; transition: opacity 0.4s, transform 0.4s; 
+            box-shadow: 0 0 10px rgba(255,106,0,0.5);
         }
         .Hotspot.hidden { opacity: 0; transform: scale(0); pointer-events: none; }
         .HotspotAnnotation { 
-            background: rgba(0, 0, 0, 0.8); color: white; padding: 5px 10px; border-radius: 4px; 
+            background: rgba(0, 0, 0, 0.85); color: white; padding: 6px 12px; border-radius: 4px; 
             font-size: 10px; position: absolute; transform: translate(20px, -50%); border: 1px solid var(--yun-orange);
-            white-space: nowrap; pointer-events: none;
+            white-space: nowrap; pointer-events: none; font-weight: bold;
+        }
+
+        @media (max-width: 480px) {
+            .fab span { display: none; } /* Hide text on tiny screens, icons only */
+            .fab { padding: 12px; border-radius: 50%; }
         }
     </style>
 </head>
 <body>
 
 <div id="start-screen">
-    <div class="radar-sweep"></div>
-    <button class="commence-btn" onclick="document.getElementById('start-screen').style.opacity='0'; setTimeout(()=>document.getElementById('start-screen').style.visibility='hidden', 800)">Initialize Feed</button>
+    <div class="radar-container">
+        <div class="radar-sweep"></div>
+        <div style="z-index: 3002; background:var(--yun-orange); color:white; padding:6px 16px; font-weight:900; font-style:italic; border-radius:4px;">YUN</div>
+    </div>
+    <button class="commence-btn" onclick="const s=document.getElementById('start-screen'); s.style.opacity='0'; setTimeout(()=>s.style.visibility='hidden', 800)">Initialize Feed</button>
 </div>
 
 <div class="app-overlay">
     <div class="control-panel">
         <div style="display: flex; flex-direction: column;">
-            <div class="panel-label">Fleet Asset</div>
+            <div class="panel-label">Active Asset</div>
             <select id="model-select"></select>
         </div>
         <button onclick="document.getElementById('details-panel').classList.add('active')" style="background:var(--yun-orange); color:white; border:none; padding:10px 18px; border-radius:6px; font-weight:bold; cursor:pointer; font-size:11px;">SPECS</button>
@@ -138,32 +155,50 @@
 
 <div class="action-bar">
     <button id="toggle-hotspots" class="fab active">
-        <span>●</span> Telemetry
+        Telemetry
     </button>
     <button id="ar-button" class="fab">
-        <span>▽</span> View In AR
+        View In AR
     </button>
 </div>
 
 <div id="details-panel" class="details-panel">
     <div class="spec-content">
-        <h2 id="asset-title" style="color: var(--yun-orange); font-weight: 300; text-transform: uppercase;">-</h2>
-        <div id="spec-list">
-            <div style="margin-bottom:20px"><span class="panel-label">Description</span><p id="spec-desc" style="font-size:14px; opacity:0.8;"></p></div>
-        </div>
-        <button onclick="document.getElementById('details-panel').classList.remove('active')" style="width:100%; background:var(--yun-orange); color:white; border:none; padding:15px; border-radius:8px; cursor:pointer; font-weight:bold;">CLOSE</button>
+        <h2 id="asset-title" style="color: var(--yun-orange); font-weight: 300; text-transform: uppercase; margin-bottom:40px;">-</h2>
+        <div class="spec-item"><span class="panel-label">Operated By</span><span id="spec-crew" style="display:block; margin-top:5px;">-</span></div>
+        <div class="spec-item"><span class="panel-label">Primary Zone</span><span id="spec-base" style="display:block; margin-top:5px;">-</span></div>
+        <div class="spec-item"><span class="panel-label">Description</span><p id="spec-desc" style="font-size:14px; opacity:0.8; line-height:1.6;"></p></div>
+        <button onclick="document.getElementById('details-panel').classList.remove('active')" style="width:100%; background:var(--yun-orange); color:white; border:none; padding:15px; border-radius:8px; cursor:pointer; font-weight:bold; text-transform:uppercase;">Dismiss</button>
     </div>
 </div>
 
 <model-viewer id="main-viewer" ar ar-modes="webxr scene-viewer quick-look" camera-controls shadow-intensity="1" tone-mapping="neutral" interaction-prompt="none">
-    <div slot="ar-button" style="display:none;"></div> </model-viewer>
+    <div slot="ar-button" style="display:none;"></div>
+</model-viewer>
 
 <script>
     const viewer = document.querySelector('#main-viewer');
     const select = document.querySelector('#model-select');
     const hotspotBtn = document.querySelector('#toggle-hotspots');
     const arBtn = document.querySelector('#ar-button');
-    let fleetData = [];
+
+    // HARDCODED DATA
+    const fleetData = [
+        {
+            "name": "Aircraft Loader TLD",
+            "file": "tld_121_aircraft_loader",
+            "crew": "Ground Ops Team A",
+            "base": "Global Hub",
+            "description": "High-capacity aircraft loader used for main deck cargo operations."
+        },
+        {
+            "name": "Ground Power Unit",
+            "file": "gpu_aiport_ground_power_unit",
+            "crew": "Maintenance Team 4",
+            "base": "Logistics Zone",
+            "description": "Mobile power unit providing 400Hz AC power to aircraft on the stand."
+        }
+    ];
 
     const hotspotMap = {
         "tld_121_aircraft_loader": [
@@ -171,19 +206,15 @@
             { pos: "0.2443m 0.7675m -0.3819m", norm: "-0.34m 0.18m 0.91m", label: "Controls" }
         ],
         "gpu_aiport_ground_power_unit": [
-            { pos: "-1.284m 0.781m 0.054m", norm: "-1m 0m 0m", label: "Control Panel" },
-            { pos: "1.134m 1.142m -0.671m", norm: "0m 0m 1m", label: "Power Cable" },
-            { pos: "-1.329m 1.371m -0.083m", norm: "-1m 0m 0m", label: "Handle" }
+            { pos: "-1.2840789556503296m 0.7819558181829164m 0.05466036998161867m", norm: "-1m 0m 0m", label: "Control Panel" },
+            { pos: "1.1345745549510462m 1.1426336548105873m -0.6715130852216802m", norm: "0.000006794102855157741m 0.010522975728222403m 0.9999446319350204m", label: "Power Cable" },
+            { pos: "-1.3294721852771438m 1.3710423101303315m -0.08365852030354018m", norm: "-0.965919463337721m -0.25883152122923964m 0.002415359916628815m", label: "Handle" }
         ]
     };
 
-    async function init() {
-        try {
-            const res = await fetch('models.json');
-            fleetData = await res.json();
-            select.innerHTML = fleetData.map((m, i) => `<option value="${i}">${m.name.toUpperCase()}</option>`).join('');
-            updateAsset(0);
-        } catch (e) { console.error("Data error", e); }
+    function init() {
+        select.innerHTML = fleetData.map((m, i) => `<option value="${i}">${m.name.toUpperCase()}</option>`).join('');
+        updateAsset(0);
     }
 
     function updateAsset(idx) {
@@ -192,10 +223,14 @@
         
         // UI Updates
         document.getElementById('asset-title').innerText = asset.name;
+        document.getElementById('spec-crew').innerText = asset.crew;
+        document.getElementById('spec-base').innerText = asset.base;
         document.getElementById('spec-desc').innerText = asset.description;
 
-        // Hotspot management
+        // Clean hotspots
         viewer.querySelectorAll('.Hotspot').forEach(h => h.remove());
+
+        // Wait for model load
         viewer.addEventListener('load', () => {
             const points = hotspotMap[asset.file];
             if (points) {
@@ -205,7 +240,13 @@
                     b.slot = `hotspot-${i}`;
                     b.setAttribute('data-position', p.pos);
                     b.setAttribute('data-normal', p.norm);
+                    b.setAttribute('data-visibility-attribute', 'visible');
                     b.innerHTML = `<div class="HotspotAnnotation">${p.label}</div>`;
+                    
+                    b.onclick = () => {
+                        viewer.cameraTarget = p.pos;
+                        viewer.cameraOrbit = "45deg 75deg 3m";
+                    };
                     viewer.appendChild(b);
                 });
             }
@@ -220,13 +261,8 @@
         });
     };
 
-    // AR Activation
+    // AR Button
     arBtn.onclick = () => viewer.activateAR();
-
-    // Check for AR Support to show button
-    viewer.addEventListener('ar-status', (event) => {
-        if(event.detail.status === 'not-presenting') arBtn.style.display = 'flex';
-    });
 
     select.onchange = (e) => updateAsset(e.target.value);
     init();
